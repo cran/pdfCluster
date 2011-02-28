@@ -1,0 +1,22 @@
+citHeader("To cite the sn package in publications use:")
+
+if(!exists("meta") || is.null(meta)) meta <- packageDescription("pdfCluster")
+
+citEntry(entry="manual",
+	title = paste("{R} package \\texttt{pdfCluster}: ",
+	" Cluster analysis via nonparametric density estimation (version ", meta$Version, ")", sep=""),
+	author = personList(as.person("A. Azzalini"),
+	                     as.person("G. Menardi"),
+			     as.person("T. Rosolin")),
+address = "Universit\\`a di Padova, Italia",
+year = substr(meta$Date, 1, 4),
+url = "http://azzalini.stat.unipd.it/SW/Pkg-pdfCluster",
+textVersion = 
+paste("Azzalini, A., Menardi, G., Rosolin, T. (", substr(meta$Date, 1, 4), "). ",
+"R package 'pdfCluster': Cluster analysis via nonparametric density estimation", " (version ", meta$Version, "). ",
+"URL http://azzalini.stat.unipd.it/SW/Pkg-pdfCluster",
+sep="")
+)
+
+
+ 

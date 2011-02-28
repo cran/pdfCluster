@@ -1,0 +1,51 @@
+#exportPattern("^[[:alpha:]]+")
+importFrom("graphics", plot)
+#importFrom("graphics", lines)
+
+
+export("dbs",
+       "dbs.pdfCluster",
+	#"connnected.comp",
+      "h.norm",
+       "kepdf",                
+	# "lines.kepdf",
+    #   "num.con",              
+	 "pdfClassification",
+     	 "pdfCluster",
+	# "plot",
+	 "plot.pdfSilhouette",
+       "plot.kepdf",
+	 "plot.kepdf1d",
+	 "plot.kepdf2d",
+       "plot.kepdfdd",
+	 "plot.pdfCluster",      
+	# "plot.qdelaunay",
+	# "qdelaunay",
+      "summary.kepdf",
+      "summary.pdfCluster",   
+      "summary.pdfSilhouette"
+	#"summary.qdelaunay"
+)
+
+exportMethods(
+    #"connnected.comp",
+    "dbs",
+    #"h.norm",
+    #"lines",
+    #"num.con",
+    "plot",
+    "show" 
+)
+
+exportClasses(
+    # "dendrogram",
+     "kepdf",
+     "pdfCluster",
+     "pdfSilhouette",
+    # "qdelaunay",
+     "summary.kepdf",
+     "summary.pdfCluster",
+     "summary.pdfSilhouette"
+    # "summary.qdelaunay" 
+)
+
