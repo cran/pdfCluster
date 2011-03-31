@@ -1,0 +1,9 @@
+
+version 0.1-8 (Feb.2011):
+  first public release and distribution via WWW
+
+version 0.1-9 (2011-03-31)
+ - included a function to compute the adjusted Rand index of two partitions
+ - included the density-based Silhouette plot as possible option when displaying objects of class pdfCluster.
+
+ 

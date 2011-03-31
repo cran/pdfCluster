@@ -46,13 +46,15 @@ See \code{\link{pdfCluster}} for further details.
 	Plots objects of {\code{\link{pdfCluster-class}}}. 
 	{\code{\link{plot-methods}}} are available for:
 	\itemize{
-		\item {the mode function, gives the number of connected components when the proportion of data points with density above a threshold varies. 
+		\item {the mode function: gives the number of connected components when the proportion of data points with density above a threshold varies. 
 				Set argument \code{which} to 1 to display this plot.}
 		\item {the cluster tree: plot the hierarchical structure associated to the clusters detected by different sections of
 			the density estimate. Set argument \code{which} to 2 to display this plot. Not available when \code{ctrl}=TRUE. }
 		\item {the data points: scatterplot of data or of all the possible couples of coordinates reporting the label group. Set 
 			argument \code{which} to 3 to display this plot. }
-		}. See \code{\link{plot.pdfCluster}} for further details.}
+		\item {the density-based Silhouette information: graphical diagnostics of the clustering. See \code{\link{plot.pdfSilhouette}}. 
+		   Set argument \code{which} to 4 to display this plot. }
+		} See \code{\link{plot.pdfCluster}} for further details.}
     \item{show}{\code{signature(object = "pdfCluster")}.
 
 	Prints the following elements:

@@ -9,7 +9,7 @@ Plot objects of class pdfCluster
 Function and methods for plotting objects of \code{\link{pdfCluster-class}}
 }
 \usage{
-plot.pdfCluster(x, y, which = 1:3, stage = Inf, pch = NULL, col = NULL, ...)
+plot.pdfCluster(x, y, which = 1:4, stage = Inf, pch = NULL, col = NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -25,7 +25,8 @@ To be used to select the type of plot: \itemize{
 		\item when \code{which = 2} plots the cluster tree associated to different sections of
 			the density estimate.
 		\item when \code{which = 3} displays the scatterplot of data or of all the possible couples of coordinates reporting the label group. 
-  }
+		\item when \code{which = 4} displays the \code{\link{pdfCluster-class}} 
+		}
 Multiple choices are possible.  
   }
   \item{stage}{

@@ -3,7 +3,8 @@ importFrom("graphics", plot)
 #importFrom("graphics", lines)
 
 
-export("dbs",
+export("adj.rand.index",
+	"dbs",
        "dbs.pdfCluster",
 	#"connnected.comp",
       "h.norm",

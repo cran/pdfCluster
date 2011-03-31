@@ -659,7 +659,8 @@ pdfClassification <- function(obj, h.funct="h.norm", n.stage=5){
   obj
 }
 
-plot.pdfCluster <- function(x, y, which=1:3, stage=Inf, pch=NULL, col=NULL, ...){
+
+plot.pdfCluster <- function(x, y, which=1:4, stage=Inf, pch=NULL, col=NULL, ...){
   if (is.element(2, which) & x@ctrl) which <- setdiff(which, 2)
   w12 <- sort(which)[1:min(2,length(which))]
   if(setequal(1:2,w12)) par(mfrow=c(1,2))
@@ -686,7 +687,7 @@ plot.pdfCluster <- function(x, y, which=1:3, stage=Inf, pch=NULL, col=NULL, ...)
     stage <- min(stage, length(x@stages))
     if(stage==0) {g <- x@cluster.cores; g[is.na(x@cluster.cores)] <- 0}
     else {g <- x@stages[[stage]]; g[is.na(x@stages[[stage]])] <- 0} 
-	x <- x@x
+	dat <- x@x
     M <-  length(table(g))
     if (is.null(pch)) #|(length(pch) < M & length(pch) > 1)) {
 	pch <- as.character(g)
@@ -706,25 +707,32 @@ plot.pdfCluster <- function(x, y, which=1:3, stage=Inf, pch=NULL, col=NULL, ...)
 	levels(newc) <- rep(levels(as.factor(col)), length(levels(as.factor(col))))[1:M]
 	if (is.numeric(col)) col <- as.numeric(as.character(newc)) else col <- as.character(newc)
 	}
-	if(ncol(x)==1){
-	if(is.null(list(...)$add))  plot(x[,1], pch=pch, col=col, cex=.75, ylab="x", ...)
-#	if(is.null(list(...)$add))  plot(x[,1], type="n", ...)
+	if(ncol(dat)==1){
+	if(is.null(list(...)$add))  plot(dat[,1], pch=pch, col=col, cex=.75, ylab="x", ...)
+#	if(is.null(list(...)$add))  plot(dat[,1], type="n", ...)
 #    for(m in 0:M) {
 #      gr <- (g==m)
-#      if(m==0) points(seq(along=x)[gr], x[gr,],  pch=0, cex=0.2)
-#      else points(seq(along=x)[gr], x[gr,], pch=m, col=m+1, cex=0.75)
+#      if(m==0) points(seq(along=x)[gr], dat[gr,],  pch=0, cex=0.2)
+#      else points(seq(along=x)[gr], dat[gr,], pch=m, col=m+1, cex=0.75)
 #      } 
-	} else if (ncol(x)==2){
-if(is.null(lab <- colnames(x))) {lab <- paste(rep("V", ncol(x)), 1:ncol(x), sep="")}	
-if(is.null(list(...)$add))  plot(x, pch=pch, col=col, xlab=lab[1], ylab=lab[2], cex=.75, ...)
-#	if(is.null(list(...)$add))  plot(x[,coord], type="n", ...)
+	} else if (ncol(dat)==2){
+if(is.null(lab <- colnames(dat))) {lab <- paste(rep("V", ncol(dat)), 1:ncol(dat), sep="")}	
+if(is.null(list(...)$add))  plot(dat, pch=pch, col=col, xlab=lab[1], ylab=lab[2], cex=.75, ...)
+#	if(is.null(list(...)$add))  plot(dat[,coord], type="n", ...)
 #    for(m in 0:M) {
 #      gr <- (g==m)
-#      if(m==0) {pch=pch[1]; points(x[gr,coord],  pch=pch , cex=0.2)}
-#      else points(x[gr,coord], pch=pch[m], col=m, cex=0.75)
+#      if(m==0) {pch=pch[1]; points(dat[gr,coord],  pch=pch , cex=0.2)}
+#      else points(dat[gr,coord], pch=pch[m], col=m, cex=0.75)
 #      }
-	  } else pairs(x, pch=pch, col=col, ...)
+	  } else pairs(dat, pch=pch, col=col, ...)
   }
+    if(is.element(4, which))    {
+	 if(is.element(3, which)) {
+     cat("press <enter> to continue...")
+     readline()
+   }
+   plot(dbs(x))
+   }
   #browser()
   invisible()
 }
@@ -821,6 +829,19 @@ names(dbs.groups[[m]]) <- ind
 }
 names(dbs.groups) <- paste("cluster", 1:length(dbs.groups), sep="")
 new("summary.pdfSilhouette", obj.class=class(object)[1], dbs.groups = dbs.groups)
+}
+
+adj.rand.index <- function (cl1, cl2){
+  tab <- table(cl1, cl2)
+  f2 <- function(n) n*(n-1)/2
+  sum.f2 <- function(v) sum(f2(v))
+  marg.1 <- apply(tab,1,sum)
+  marg.2 <- apply(tab,2,sum)  
+  n<- sum(tab)
+  prod <- sum.f2(marg.1)*sum.f2(marg.2)/f2(n)
+  num <- (sum.f2(as.vector(tab))- prod)
+  den <- 0.5*(sum.f2(marg.1)+sum.f2(marg.2))-prod
+  num/den
 }
 
 ###########################################

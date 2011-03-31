@@ -74,7 +74,7 @@ An S4 object of \code{\link{pdfCluster-class}} whose slots are:
   }
   
 \references{
-Azzalini A., Torelli N. (2007). Clustering via nonparametric density estimation. \emph{Statistics and Computing}. vol. 17, pp. 71-80.
+Azzalini A., Torelli N. (2007). Clustering via nonparametric density estimation. \emph{Statistics and Computing}. 17, 71-80.
 }
 %%\note{
 %%  ~~further notes~~
@@ -98,12 +98,9 @@ gr <- wine[,1]
 x <- wine[, c(2,5,8)]
 
 #clustering
-cl<-pdfCluster(x)
+cl <- pdfCluster(x)
 summary(cl)
 plot(cl)
-
-#cluster cores
-table(cl@cluster.cores)
 
 #comparison with original groups
 table(cl@clusters,gr)
@@ -118,17 +115,17 @@ table(cl@clusters,gr)
 data(oliveoil)
 
 #preparing data
-olive1 <- 1+oliveoil[,3:10]
+olive1 <- 1 + oliveoil[, 3:10]
 margin <- apply(data.matrix(olive1),1,sum)
 olive1 <- olive1/margin
-alr <- (-log( olive1[,-4]/olive1[,4]))
+alr <- (-log( olive1[, -4]/olive1[, 4]))
 #select the first 5 principal components
-x <- princomp(alr, cor=TRUE)$scores[,1:5]
+x <- princomp(alr, cor=TRUE)$scores[, 1:5]
 
 #estimation of density
 pdf <- kepdf(x)
 summary(pdf)
-plot(pdf, gap=.25)
+plot(pdf, gap=0.25)
 
 #clustering
 cl <- pdfCluster(x)
@@ -137,7 +134,10 @@ plot(cl)
 
 #comparing groups with original macro-area membership
 groups <- cl@clusters
-table(groups,oliveoil$macro.area)
+table(groups, oliveoil$macro.area)
+
+#cluster cores
+table(cl@cluster.cores)
 }
 
 % Add one or more standard keywords, see file 'KEYWORDS' in the

@@ -34,7 +34,7 @@ An object of \code{\link{pdfCluster-class}} with slot \code{stages} non NULL and
 See \code{\link{pdfCluster-class}} for further details.  
 }
 \references{
-Azzalini A., Torelli N. (2007). Clustering via nonparametric density estimation. \emph{Statistics and Computing}. vol. 17, pp. 71-80.
+Azzalini A., Torelli N. (2007). Clustering via nonparametric density estimation. \emph{Statistics and Computing}. 17, 71-80.
 }
 %%\author{
 %%  ~~who you are~~
