@@ -100,6 +100,7 @@ plot.kepdf2d <- function (x, y, eval.points=NULL, n.grid=c(25,25),
 	xgrid=sort(eval.points[, 1])
 	ygrid=sort(eval.points[, 2])
 	}
+	method <- match.arg(method,choices=c("contour","perspective","image"))
 	nx <- length(xgrid)
 	ny <- length(ygrid)
 	grid.points <- as.matrix(expand.grid(xgrid,ygrid))
@@ -115,7 +116,7 @@ plot.kepdf2d <- function (x, y, eval.points=NULL, n.grid=c(25,25),
 		if(is.null(col)) col="lightblue"		
 		persp(xgrid,ygrid, matrix(pdf@estimate, nx,ny), main=main, xlab = xlab, ylab = ylab, zlab=zlab, col=col, ticktype = "detailed", ...)
 	} else {
-	if(method!="contour") warning("\"method\" should be one of \"contour\", \"image\", \"perspective\". A \"contour\" plot has been created.")
+	#if(method!="contour") warning("\"method\" should be one of \"contour\", \"image\", \"perspective\". A \"contour\" plot has been created.")
 	if(!add) plot(grid.points, type = "n", main=main, xlab = xlab, ylab = ylab, ...)
 	if(dim(x@eval.points)[1]==dim(x@x)[1] && all(x@x==x@eval.points)) pdf.obs <- x@estimate else pdf.obs <- kepdf(x@x, h=x@h, eval.points=x@x, h.weights=x@h.weights)@estimate
 	hts <- quantile(rep(pdf.obs, x@h.weights), prob = (100 - props)/100)
@@ -156,6 +157,7 @@ plot.kepdfdd <- function (x, y, ..., main=NULL, method="contour", text.diag.pane
     on.exit(par(opar))
 	out <- list()
 	count <- 1
+	method <- match.arg(method,choices=c("contour","perspective","image"))
     for (i in 1L:nc){ 
 		for (j in (1L:nc)) 
 			if(i==j) {
@@ -517,6 +519,8 @@ con2tree <- function(object, f, debug=FALSE){
   altezza <- numeric(M)
   m <- 0
   salti.su <- salti[salti>0]
+  ow <- options("warn")
+      options(warn = -1)
   while(m <M){
     m <- m+1
     # altezza[m] <- p[1] * (which(cumsum(salti.su) >= m)[1] - 1)
@@ -580,6 +584,7 @@ con2tree <- function(object, f, debug=FALSE){
   if (M > 1) {attr(tree, "class") <- "dendrogram"
   ctrl <- FALSE } else ctrl <- TRUE 
   if(debug) browser()
+    options(warn = -1)
   invisible(list(g=gruppi, sets=insiemi, tree=tree, bad=bad.grid, ctrl=ctrl))
  }
 
@@ -595,8 +600,8 @@ pdfCluster <- function(x, h=h.norm(x), hmult=.75, n.grid=min(50,nrow(as.matrix(x
   pn <- seq(0,1,length=n.grid+2)[-c(1,n.grid+2)]
   nc <- num.con(x, pdf, profile.grid=n.grid-1, correct=TRUE, plot.it=FALSE)
   struct <- con2tree(nc, estimate,  debug=debug)
-  if(struct$bad)
-    stop("The grid is too coarse: re-run with larger value of 'n.grid'")
+  if(struct$bad){
+    message("No output given"); message("The grid is too coarse: re-run with larger value of 'n.grid' or with larger value of 'hmult'") } else{
   g <- struct$g
   g[struct$g==0] <- NA
   out <- new("pdfCluster", call=match.call(), x=data.matrix(x), estimate=estimate, h=h, hmult=hmult, nc=nc,  
@@ -604,7 +609,7 @@ pdfCluster <- function(x, h=h.norm(x), hmult=.75, n.grid=min(50,nrow(as.matrix(x
   if(n.stage> 0) 
     {out <- pdfClassification(out, n.stage=n.stage)
 	}  
-  out
+  out}
 }
 #summary.pdfCluster <- function(object, ...){
 summary.pdfCluster <- function(object,...){
@@ -635,8 +640,8 @@ pdfClassification <- function(obj, h.funct="h.norm", n.stage=5){
   ind.max <- t(apply(f, 1,order)[rev(1:M),])#at each line decreasing sort
   i1 <- ind.max[,1]
   i2 <- ind.max[,2]
-  f1 <- diag(f[,i1])
-  f2 <- diag(f[,i2])
+  f1 <- diag(as.matrix(f[,i1]))
+  f2 <- diag(as.matrix(f[,i2]))
   log.ratio <- log(f1)- log(f2)
   if(stage < n.stage){
     alti <- (log.ratio >= quantile(log.ratio, (n.stage-stage)/n.stage))
@@ -662,6 +667,7 @@ pdfClassification <- function(obj, h.funct="h.norm", n.stage=5){
 
 plot.pdfCluster <- function(x, y, which=1:4, stage=Inf, pch=NULL, col=NULL, ...){
   if (is.element(2, which) & x@ctrl) which <- setdiff(which, 2)
+  if (is.element(4, which) & x@ctrl) which <- setdiff(which, 4)
   w12 <- sort(which)[1:min(2,length(which))]
   if(setequal(1:2,w12)) par(mfrow=c(1,2))
   if(is.element(1, which)){
@@ -678,12 +684,17 @@ plot.pdfCluster <- function(x, y, which=1:4, stage=Inf, pch=NULL, col=NULL, ...)
     title(sub="groups tree")
     }
   if(setequal(1:2,w12)) par(mfrow=c(1,1))
-  if(length(setdiff(w12,3)) > 0 ) {
+ # if(length(setdiff(which,w12)) > 0) {
+  #if(length(setdiff(w12,c(3,4))) > 0 ) {
+ #    cat("press <enter> to continue...")
+ #    readline()
+ #  }
+  if(is.element(3, which))    {
+    #browser()  
+	if(sum(which<3)) {
      cat("press <enter> to continue...")
      readline()
    }
-  if(is.element(3, which))    {
-    #browser()  
     stage <- min(stage, length(x@stages))
     if(stage==0) {g <- x@cluster.cores; g[is.na(x@cluster.cores)] <- 0}
     else {g <- x@stages[[stage]]; g[is.na(x@stages[[stage]])] <- 0} 
@@ -727,7 +738,7 @@ if(is.null(list(...)$add))  plot(dat, pch=pch, col=col, xlab=lab[1], ylab=lab[2]
 	  } else pairs(dat, pch=pch, col=col, ...)
   }
     if(is.element(4, which))    {
-	 if(is.element(3, which)) {
+if(sum(which<4)) {
      cat("press <enter> to continue...")
      readline()
    }
@@ -755,6 +766,7 @@ ordered <- t(apply(tau_m,1,order,decreasing = T))
 ind.ug <- which(clusters==ordered[,1])
 dbs.ind <- diag(log(tau_m[,clusters]/tau_m[,ordered[,1]]))
 dbs.ind[ind.ug] <- diag(log(tau_m[ind.ug,ordered[ind.ug,1]]/ind[ind.ug,ordered[ind.ug,2]]))
+dbs.ind[is.infinite(dbs.ind)]<-max(dbs.ind[is.finite(dbs.ind)])+1
 new("pdfSilhouette", x=x, prior=prior, dbs=dbs.ind/max(dbs.ind), clusters=clusters, nc=M, stage=NULL, call=match.call())
 }
 
@@ -767,7 +779,7 @@ if (stage == 0) {
 	ind.all <- which(!is.na(x@stages[[stage]]))
 	clusters <- x@stages[[stage]][ind.all] 
 	}
-y <- as.matrix(x@x)[ind.all, ]
+y <- as.matrix((as.matrix(x@x))[ind.all,])
 h.fn <- get(h.funct, inherit = TRUE)
 M <- max(clusters)
 if(M==1) stop("dbs can be computed for 2 groups at least")
@@ -784,6 +796,7 @@ ordered <- t(apply(tau_m,1,order,decreasing = T))
 ind.ug <- which(clusters==ordered[,1])
 dbs.ind <- diag(log(tau_m[,clusters]/tau_m[,ordered[,1]]))
 dbs.ind[ind.ug] <- diag(log(tau_m[ind.ug,ordered[ind.ug,1]]/ind[ind.ug,ordered[ind.ug,2]]))
+dbs.ind[is.infinite(dbs.ind)]<-max(dbs.ind[is.finite(dbs.ind)])+1
 dbs.all <- rep(NA, length(x@cluster.cores))
 dbs.all[ind.all] <- dbs.ind/max(dbs.ind)
 cl <- rep(NA, length(x@cluster.cores))
@@ -795,7 +808,10 @@ plot.pdfSilhouette <- function(x, y, xlab="", ylab="", col= NULL, lwd =3, cex=.9
 dbs=x@dbs
 nc=x@nc
 #par(mar=c(2,2.1,.1,2))
-if (is.null(col)) cl <- paste(rep("grey",nc),round(seq(1,70,length=nc)),sep="") else cl=rep(col,nc)
+#fino a vers 0.1.9
+#if (is.null(col)) cl <- paste(rep("grey",nc),round(seq(1,70,length=nc)),sep="") else cl=rep(col,nc)
+#da 0.1.10
+if (is.null(col)) cl <- 1:nc else cl=rep(col,nc)
 if (is.null(main)) main="dbs plot" 
 plot(0,axes=F, xlim=c(min(0, min(dbs, na.rm=T)),1), ylim=c(0,sum(!is.na(dbs))),type="n",ylab=ylab, xlab=xlab, main=main, ...)
 ini <- 0
@@ -926,6 +942,9 @@ cat("Rows of ", object@props[i], "% top density data points:", object@indices[[i
 #
 setMethod("show",signature("pdfCluster"), function(object){
 	cat("Clustering via nonparametric density estimation", "\n","\n")
+	cat("Call: ")
+    print(object@call)
+    cat("\n")
 	h  <-  object@hmult*object@h
 	if(ncol(object@x)==1) 
 	cat("Smothing parameter: ", h, "\n", "\n")

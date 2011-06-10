@@ -25,7 +25,7 @@ Not used; for compatibility with generic plot;
 \item{xlab}{A title for the x axis;}
 \item{ylab}{A title for the y axis;}
   \item{col}{
-A specification for the plotting color. Default are different tones of "grey" for different groups;}
+A specification for the plotting color. Default are colors in palette corresponding to the group labels;}
   \item{lwd}{
 A specification for the width of the bars in the plot;}
   \item{cex}{

@@ -6,4 +6,12 @@ version 0.1-9 (2011-03-31)
  - included a function to compute the adjusted Rand index of two partitions
  - included the density-based Silhouette plot as possible option when displaying objects of class pdfCluster.
 
+version 0.1-10 (2011-06-10)
+ - fixed a bug in pdfClassification
+ - included the possibility to match argument in choosing a method for plotting objects of class kepdf
+ - changed the default colors to be used when plotting objects of class pdfSilhouette. 
+ - added the Call of the function in the Show-methods for function pdfCluster
+ - fixed a bug in function dbs, occurring when some posterior probabilities are numerically estimated as zero 
+
+
  

@@ -67,7 +67,9 @@ is estimated by
 
 \eqn{\hat{f}(x_i|x_i \in m)} is a density estimate at \eqn{x_i} evaluated with function \code{\link{kepdf}} by using the only data points in \eqn{m},
 and \eqn{\pi_{m}} is a prior probability of \eqn{m}.
-}
+
+\emph{Note:} when there exists \eqn{x_j} such that \eqn{\hat{\tau}_{m_{1}}(x_j)} is zero, \eqn{\hat{dbs}_j} is forced to 1 and \eqn{{\max}_{x_i }\left| \log\left(\frac{\hat{\tau}_{m_{0}}(x_i)}{\hat{\tau}_{m_{1}}(x_i)}\right)\right|}
+is taken by excluding \eqn{x_j} from tha data matrix \code{x}.}
 
 \value{
 An object of class \code{"pdfSilhouette"}, with slots:  
