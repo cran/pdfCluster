@@ -21,7 +21,7 @@ Not used; for compatibility with generic plot;
 }
   \item{which}{
 To be used to select the type of plot: \itemize{
-		\item when \code{which = 1} plots the mode function, corresponding to the number of modes for different proportions of data points with density above (below???) a threshold. 
+		\item when \code{which = 1} plots the mode function, corresponding to the number of modes for different proportions of data points with density above a threshold. 
 		\item when \code{which = 2} plots the cluster tree associated to different sections of
 			the density estimate.
 		\item when \code{which = 3} displays the scatterplot of data or of all the possible couples of coordinates reporting the label group. 

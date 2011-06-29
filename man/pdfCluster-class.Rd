@@ -26,11 +26,11 @@ Objects can be created by calls of the form \code{new("pdfCluster", ...)} or as 
     \item{\code{cluster.cores}:}{Object of class \code{"ANY"} reporting the group labels of the data allocated to the cluster cores. }
     \item{\code{tree}:}{Object of class \code{"ANY"}, namely class \code{dendrogram} if the procedure detects more than one group, \code{list} otherwise.
 		It reports the cluster tree structure associated to the different connected components for different density levels.}
-    \item{\code{stages}:}{Object of class \code{"ANY"}, being NULL if the cluster cores only are detected, \code{"list"} when also the lower density data are allocated. 
+    \item{\code{stages}:}{Object of class \code{"ANY"}, being \code{NULL} if the cluster cores only are detected, \code{"list"} when also the lower density data are allocated. 
 							The elements of the list correspond to the group labels at the different stages of the classification procedure.
-							NA values correspond to unlabeled data.  }
-    \item{\code{ctrl}:}{Object of class \code{"logical"} being TRUE if the procedure detects one group only. }
-	\item{\code{clusters}:}{Object of class \code{"ANY"} being NULL if the cluster cores only are detected, \code{"numeric"} when
+							\code{NA} values correspond to unlabeled data.  }
+    \item{\code{noc}:}{Object of class \code{"numeric"} giving the number of clusters. }
+	\item{\code{clusters}:}{Object of class \code{"ANY"} being \code{NULL} if the cluster cores only are detected, \code{"numeric"} when
 	all the data are clustered.}
   }
 See \code{\link{pdfCluster}} for further details.  
@@ -49,11 +49,11 @@ See \code{\link{pdfCluster}} for further details.
 		\item {the mode function: gives the number of connected components when the proportion of data points with density above a threshold varies. 
 				Set argument \code{which} to 1 to display this plot.}
 		\item {the cluster tree: plot the hierarchical structure associated to the clusters detected by different sections of
-			the density estimate. Set argument \code{which} to 2 to display this plot. Not available when \code{ctrl}=TRUE. }
+			the density estimate. Set argument \code{which} to 2 to display this plot.  }
 		\item {the data points: scatterplot of data or of all the possible couples of coordinates reporting the label group. Set 
 			argument \code{which} to 3 to display this plot. }
 		\item {the density-based Silhouette information: graphical diagnostics of the clustering. See \code{\link{plot.pdfSilhouette}}. 
-		   Set argument \code{which} to 4 to display this plot. }
+		   Set argument \code{which} to 4 to display this plot. Not available when \code{noc}=1.}
 		} See \code{\link{plot.pdfCluster}} for further details.}
     \item{show}{\code{signature(object = "pdfCluster")}.
 

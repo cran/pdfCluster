@@ -13,5 +13,19 @@ version 0.1-10 (2011-06-10)
  - added the Call of the function in the Show-methods for function pdfCluster
  - fixed a bug in function dbs, occurring when some posterior probabilities are numerically estimated as zero 
 
+version 0.1-11 (2011-06-16)
+ - fixed a bug in the procedure for finding high-density connected regions, occurring when groups are so well separated that more than 
+   one connected region are founded for any of the n.grid thresholds of the density estimate
+ - included a message to be printed when classification of low-density data points is accomplished in less than n.stage stages. 
 
- 
+version 0.1-12 (2011-06-27)
+ - found a bug in function "quantile". Given a vector of ordered probabilities, it may return unsorted quantiles (at the 16th digit).    fixed by rounding to the 15th digit the values of function "quantile".
+ - some minor changes in documentation. 
+
+version 0.1-13 (2011-06-29)
+ - extended the class "dendrogram" to the slot "tree" of objects of class pdfCluster, also when 1 cluster only is found. As a consequence,
+   plotting the cluster tree is now possible even in this case.
+ - removed the slot "ctrl" from objects of class pdfCluster
+ - included the slot "noc" in objects of class pdfCluster
+ - included a control in pdfClassification: outliers with zero estimated conditional density of belonging to the detected groups are now    excluded from the classification  
+  

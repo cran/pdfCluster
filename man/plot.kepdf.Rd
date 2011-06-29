@@ -12,11 +12,11 @@ Function and methods for plotting objects of \code{\link{kepdf-class}}
 }
 
 \usage{
-plot.kepdf1d(x, y, eval.points=NULL, n.grid=25, data=NULL, 
+plot.kepdf1d(x, y, eval.points=NULL, n.grid=50, data=NULL, 
 	add=FALSE, main	= NULL, xlab=NULL, ylab=NULL, col=NULL,
 	col.data=2, type="l", ...)
 
-plot.kepdf2d(x, y, eval.points=NULL, n.grid=c(25,25), data=NULL,
+plot.kepdf2d(x, y, eval.points=NULL, n.grid=c(30,30), data=NULL,
 	add=FALSE, main=NULL, xlab=NULL, ylab=NULL, zlab=NULL, 
 	col=NULL, col.data=2, props=c(75,50,25), method="contour", 
 	ticktype = "detailed", ...)
@@ -41,16 +41,16 @@ evaluated on a grid defined on the range of sample data.}
   \item{n.grid}{
 A vector with length set to the number of column of sample data, defining the
 length of the grid on which the density to be plotted is evaluated; this
-argument is ignored when eval.points is not NULL.
+argument is ignored when eval.points is not \code{NULL}.
   }
 \item{data}{Data to be add to the plot.}
-\item{add}{Logical. If TRUE, add to a current plot.}
+\item{add}{Logical. If \code{TRUE}, add to a current plot.}
 \item{main}{An overall title for the plot}
 \item{xlab}{A title for the x axis}
 \item{ylab}{A title for the y axis}
 \item{zlab}{A title for the z axis}
 \item{col}{A specification for the plotting color}
-\item{col.data}{A specification for the color of \code{data}. Ignored if \code{data} is NULL.}
+\item{col.data}{A specification for the color of \code{data}. Ignored if \code{data} is \code{NULL}.}
 \item{type}{What type of plot should be drawn. This argument applies when kernel density estimate is performed on unidimensional data only. Default value is "l".}
 \item{props}{A vector defining the fraction of the data to be included within each density level. This argument applies when kernel density estimate is performed on
 multidimensional data only.}

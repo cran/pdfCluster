@@ -10,11 +10,11 @@ setClass("summary.kepdf",representation(obj.class="character", mode="numeric", p
 setOldClass("dendrogram")   
 
 setClass("pdfCluster", representation(call="call", x="matrix", estimate="numeric", h="vector", hmult="numeric", nc="list",  
-              cluster.cores="ANY", tree="ANY", ctrl="logical", stages="ANY", clusters="ANY"))
+              cluster.cores="ANY", tree="dendrogram", noc="numeric", stages="ANY", clusters="ANY"))
 			  
 setClass("pdfSilhouette", representation(x="matrix", prior="numeric", dbs="numeric", clusters="numeric", nc="numeric", stage="ANY", call="call"))
 
-setClass("summary.pdfCluster", representation(obj.class="character", cluster.cores="numeric", clusters="ANY", tree="ANY"))
+setClass("summary.pdfCluster", representation(obj.class="character", cluster.cores="numeric", clusters="ANY", tree="dendrogram"))
 
 setClass("summary.pdfSilhouette", representation(obj.class="character", dbs.groups = "list"))	
 
@@ -52,7 +52,7 @@ summary.kepdf <- function (object, ..., props=c(75,50,25)) {
     new("summary.kepdf", obj.class=class(object)[1], mode=modepos, props=props, indices=indices)
 }
 
-plot.kepdf1d <- function(x, y, eval.points=NULL, n.grid=25, data=NULL, add=FALSE, main	= NULL, xlab=NULL, ylab=NULL, col=NULL, col.data=2, type="l",...){
+plot.kepdf1d <- function(x, y, eval.points=NULL, n.grid=50, data=NULL, add=FALSE, main	= NULL, xlab=NULL, ylab=NULL, col=NULL, col.data=2, type="l",...){
 	##########################################
 	##########################################
 	# comments by GM 03/02/2011
@@ -89,7 +89,7 @@ plot.kepdf1d <- function(x, y, eval.points=NULL, n.grid=25, data=NULL, add=FALSE
 	# invisible(list(eval.points=as.vector(eval.points), estimate=pdf@estimate))
 # }
 
-plot.kepdf2d <- function (x, y, eval.points=NULL, n.grid=c(25,25), 
+plot.kepdf2d <- function (x, y, eval.points=NULL, n.grid=c(30,30), 
 	data=NULL, add=FALSE, main=NULL, xlab=NULL, ylab=NULL, zlab=NULL, col=NULL, col.data=2, props=c(75,50,25), method="contour", ticktype = "detailed", ...) {
 	if(is.null(main)) main="Kernel density estimate of data"
 	if(is.null(eval.points)) {  
@@ -268,283 +268,255 @@ new("summary.qdelaunay", nregions=nregions, nnb=nnb, nblist=nblist)
 #}  
 
 
-num.con.multi <- function(x, xd, pn=0.9, profile=TRUE, profile.grid=25, 
-                  correct=FALSE, profile2=FALSE, qnv=0, plot.it=FALSE, Q="QJ", mult=1.1){
-   # ----------------------------------------------------------------------
-   # computes number of connected regions by using the depth-first search algorithm
 
-      # INPUT
-   #  x         data matrix --> used as input for the Delaunay triangulation, internally performed.  
-   #  			The considered output of executing qdelaunay is x.nb, the structure of the neightbors of x
-   #  xd        density estimate 
-   #  pn        proportion of data to be included
-   #  profile   evaluates connected regions on a grid; pn is ignored
 
-   # OUTPUT   - list with elements
-   #  nc      - number of connected for each value of pn
-   #  p       - probab. pn [AA]
-   #  id      - matrix of group labels at each point
-   #  pq      - (CTRL) for each pn gives the corresponding quantile
-   # ----------------------------------------------------------------------
-
-   nb <- qdelaunay(x, Q=Q, mult=mult)
-
-   x.nb <- nb@nb
-
-   #require(prabclus)
-   n   <- length(xd@estimate)
-   ngrid <- profile.grid
-   if (profile)   pn <- seq(0,1,length=ngrid+2)[-c(1,ngrid+2)]
-   # p <- n * (1-pn)      								#GM 18/01/2011 non mi sembra sia usato dopo
-   # p.trunc <- trunc(p) 								#GM 18/01/2011 non mi sembra sia usato dopo
-   fest <- c(xd@estimate, rep(0,dim(nb@new)[1]))
-   # fhat <- sort(xd@estimate)  
-   # qn <- fhat[p.trunc] + (p - p.trunc) * (fhat[p.trunc + 1] - fhat[p.trunc])
-   #
-   # 30-06-2004: ripristiamo istruzione commentata che segue (ma modificata)
-   #  qn <- quantile(xd@estimate, pn)
-   qn <- as.numeric(quantile(xd@estimate, 1-pn))
-   if (qnv != 0) qn <- qnv
-        colnames(nb@new) <- colnames(xd@eval.points)
-   x <- rbind(xd@eval.points,nb@new)
-   n1  <- n + dim(nb@new)[1] 
-   n0  <- length(x.nb) 
-   #GM 18/01/2011 xd.id is a logical matrix.  is the density below or above the threshold?  
-   xd.id <- (matrix(fest , ncol=1)%*%(1/qn) ) < 1
-
-   nc.nc                  <- rep(0,length(qn))
-   names(nc.nc)           <- format(pn, digit=3)
-   nc.id                  <- matrix(0,nrow=n0,ncol=length(qn))
-   nc.id1                 <- matrix(0,nrow=n1,ncol=length(qn))
-   nc.id2                 <- matrix(0,nrow=n,ncol=length(qn))
-
-   colnames(nc.id)  <- pn
-   #browser()
-    ##############
-			
-	##############
-    for (i in 1:length(qn)) {							    #GM 18/01/2011 at each section "i" of the density
-	ni    <- sum(xd.id[,i]) 								#GM 18/01/2011 ni: how many values are below the threshold
-      if (ni<n0) { 											#GM 18/01/2011 if alle the values are below the threshold
-         x.nbc <- x.nb
-			ind <- which(!xd.id[,i])
-			for(j in ind)
-			x.nbc[[j]] <- intersect(x.nb[[j]],ind)
-			x.nbc[xd.id[,i]] <- as.integer(0)
-		 nc                   <- find.nc(x.nbc)
-         nc.nc[i]             <- nc$nc - ni
-         # nc.id[,i]          <- nc@comp.id
-         nc.id[xd.id[,i],i]   <- -1
-         nc.id[!xd.id[,i], i] <- unclass(factor(nc$comp.id[!xd.id[,i]]))
-         # (AA, prima era) : codes(factor(nc@comp.id[!xd.id[,i] ]  ))
-      }
-      if (ni==n0) {
-         nc.nc[i]  <- 0
-         nc.id[,i] <- -1
-      }
-      if (correct){
-         tt  <- table(nc.id[nc.id[,i] != -1, i])
-         ttc <- as.integer(names(tt)[tt<=1])
-         ttp <- as.integer(names(tt)[tt>1])
-         if (length(ttc)>0) 
-             for (l in 1:length(ttc)) nc.id[nc.id[,i]==ttc[l],i] <- -1
-         nc.nc[i] <- length(ttp)
-      }
-             nc.id2[,i] <- nc.id[1:n,i]
-     if (correct){
-         tt <- table(nc.id2[nc.id2[,i]!=-1,i])
-         ttc <- as.integer(names(tt)[tt<=1])
-         ttp <- as.integer(names(tt)[tt>1])
-         if (length(ttc)>0) 
-             for (l in 1:length(ttc)) nc.id2[nc.id2[,i]==ttc[l],i] <- -1
-         nc.nc[i] <- length(ttp)
-         nc.nc[i] <- length(tt)   #GM 20/01/2011 a cosa serve? e soprattutto, a cosa serve questa correzione dal momento che poi viene annullata una riga sotto?
-      }
-      nc.nc[i] <- length(unique(nc.id2[,i]))-1 # 09-07-2004
-   }
-   if (profile & plot.it) {
-      plot(c(0, pn, 1, 1), c(0, nc.nc, nc.nc[length(nc.nc)],0), 
-           ylim=c(0,max(nc.nc)), yaxt="n", type="S", cex=0.7,
-           xlab="Fraction of data points included",
-           ylab="m(p)")
-      axis(2,at=c(0:max(nc.nc)))
-      #  lines(pn,nc.nc)
-   }
-   if (profile2 & plot.it) {
-      par(mfrow=c(1,2))
-      plot(pn,nc.nc,xlim=c(0,1),ylim=c(0,max(nc.nc)),cex=0.7, pch=3,
-                xlab="Percentuale oss. incluse",ylab="Numero di gruppi")
-      lines(pn,nc.nc)
-      plot(qn/max(fest),nc.nc,xlim=c(0,1),ylim=c(0,max(nc.nc)),cex=0.7,
-                 pch=3, xlab="Density level", ylab="Number of groups")
-      lines(qn/max(fest),nc.nc)
-      par(mfrow=c(1,1))
-   }
-
-   list(nc=nc.nc, p=pn, id=nc.id2, pq=cbind(p=pn,q=qn))
-}
-
-num.con.uni <- function(x, xd, pn = 0.9, profile = TRUE, profile.grid=25,
-						correct = FALSE, profile2 = FALSE, qnv = 0, plot.it = FALSE){
-	x1 <- sort(x)
-	f <- xd@estimate[order(x)]
-	riordino <- rank(x)
-	ngrid <- profile.grid
-		if (profile)   pn <- seq(0,1,length=ngrid+2)[-c(1,ngrid+2)]
-	qn <- as.numeric(quantile(xd@estimate, 1-pn))
-	if (qnv != 0) qn <- qnv
-	xd.id <- (matrix(f , ncol=1)%*%(1/qn) ) > 1
-	xd.id1 <- rbind(FALSE,xd.id,FALSE)
-	jumps <- apply(xd.id1,2,diff)
-		which.jumps.ini <- which(rbind(jumps)>0,arr.ind=TRUE)
-		which.jumps.fin <- which(rbind(jumps)<0,arr.ind=TRUE)
-	num.con <- as.vector(table(which.jumps.ini[,2]))
-	length.con <- split(which.jumps.fin[,1]-which.jumps.ini[,1],which.jumps.ini[,2])
-	lab.con.fun <- function(num.con,length.con)rep(1:num.con,times=length.con)
-	lab.con <- mapply(lab.con.fun,num.con,length.con)
-	y <- as.matrix(xd.id)
-	y[y] <- unlist(lab.con)
-	y[y==0] <- -1
-	nc.id <- as.matrix(y[riordino,])
-	if (correct){
-		correct.id <- function(vec){
-		t <- table(vec)
-		uni <- as.integer(names(t)[t==1])
-		new <- vec
-		new[match(uni,vec)] <- -1
-		new}	
-        nc.id <- apply(nc.id,2,correct.id)   #GM 20/01/2011 giusto?
-      }
-	#browser()  
-	nc <- (apply(nc.id,2,max))
-	nc[nc<0] <- 0
-	names(nc) <- format(pn, digit=3)
-		out <- list(nc=nc,p=pn,id=nc.id,pq=cbind(pn,qn))
-	if (profile & plot.it) {
-      plot(c(0, pn, 1, 1), c(0, nc, nc[length(nc)],0), 
-           ylim=c(0,max(nc)), yaxt="n", type="S", cex=0.7,
-           xlab="Fraction of included data points ",
-           ylab="m(p)")
-      axis(2,at=c(0:max(nc)))
-      #  lines(pn,nc.nc)
-	}
-	 if (profile2 & plot.it) {
-       par(mfrow=c(1,2))
-       plot(pn,nc,xlim=c(0,1),ylim=c(0,max(nc)),cex=0.7, pch=3,
-                 xlab="Fraction of included data points ",ylab="Number of groups")
-       lines(pn,nc)
-       plot(qn/max(xd@estimate),nc,xlim=c(0,1),ylim=c(0,max(nc)),cex=0.7,
-                  pch=3, xlab="Density level",ylab="Number of groups")
-       lines(qn/max(xd@estimate),nc)
-       par(mfrow=c(1,1))
+num.con.multi<-function (x, xd, pn = 0.9, profile = TRUE, profile.grid = 25, correct=FALSE,
+    profile2 = FALSE, qnv = 0, plot.it = FALSE, 
+    Q = "QJ", mult = 1.1) 
+{
+    nb <- qdelaunay(x, Q = Q, mult = mult)
+    x.nb <- nb@nb
+    n <- length(xd@estimate)
+    ngrid <- profile.grid
+    if (profile) 
+        pn <- seq(0, 1, length = ngrid + 2)[-c(1, ngrid + 2)]
+    fest <- c(xd@estimate, rep(0, dim(nb@new)[1]))
+    qn <- as.numeric(quantile(xd@estimate, 1 - pn))
+    if (qnv != 0) 
+        qn <- qnv
+    colnames(nb@new) <- colnames(xd@eval.points)
+    x <- rbind(xd@eval.points, nb@new)
+    n1 <- n + dim(nb@new)[1]
+    n0 <- length(x.nb)
+    xd.id <- (matrix(fest, ncol = 1) %*% (1/qn)) < 1
+    nc.nc <- rep(0, length(qn))
+    names(nc.nc) <- format(pn, digit = 3)
+    nc.id <- matrix(0, nrow = n0, ncol = length(qn))
+    nc.id1 <- matrix(0, nrow = n1, ncol = length(qn))
+    nc.id2 <- matrix(0, nrow = n, ncol = length(qn))
+    colnames(nc.id) <- pn
+    for (i in 1:length(qn)) {
+        ni <- sum(xd.id[, i])
+        if (ni < n0) {
+            x.nbc <- x.nb
+            ind <- which(!xd.id[, i])
+            for (j in ind) x.nbc[[j]] <- intersect(x.nb[[j]], 
+                ind)
+            x.nbc[xd.id[, i]] <- as.integer(0)
+            nc <- find.nc(x.nbc)
+            nc.nc[i] <- nc$nc - ni
+            nc.id[xd.id[, i], i] <- -1
+            nc.id[!xd.id[, i], i] <- unclass(factor(nc$comp.id[!xd.id[, 
+                i]]))
+        }
+        if (ni == n0) {
+            nc.nc[i] <- 0
+            nc.id[, i] <- -1
+        }
+        if (correct) {
+            tt <- table(nc.id[nc.id[, i] != -1, i])
+            ttc <- as.integer(names(tt)[tt <= 1])
+            ttp <- as.integer(names(tt)[tt > 1])
+            if (length(ttc) > 0) 
+                for (l in 1:length(ttc)) nc.id[nc.id[, i] == 
+                  ttc[l], i] <- -1
+            nc.nc[i] <- length(ttp)
+        }
+        nc.id2[, i] <- nc.id[1:n, i]
+        if (correct) {
+            tt <- table(nc.id2[nc.id2[, i] != -1, i])
+            ttc <- as.integer(names(tt)[tt <= 1])
+            ttp <- as.integer(names(tt)[tt > 1])
+            if (length(ttc) > 0) 
+                for (l in 1:length(ttc)) nc.id2[nc.id2[, i] == 
+                  ttc[l], i] <- -1
+            nc.nc[i] <- length(ttp)
+            nc.nc[i] <- length(tt)
+        }
+        nc.nc[i] <- length(unique(nc.id2[, i])) - 1
     }
-	out
+	#correzione 14/06/2011
+	#{
+	if (profile) {
+	newnames<- c("0",names(nc.nc),"1")
+	nc.nc<-c(0,nc.nc,1)
+	names(nc.nc)<-newnames
+	nc.id2<-cbind(rep(-1,nrow(nc.id2)),nc.id2,rep(1,nrow(nc.id2)))
+	#nc.id2[which.max(xd@estimate)[1],1]<-1
+	pn<-c(0,pn,1)
+	qn<-c(max(xd@estimate),qn,min(xd@estimate))
+	}
+    if (profile & plot.it) {
+        plot(c(0, pn, 1, 1), c(0, nc.nc, nc.nc[length(nc.nc)], 
+            0), ylim = c(0, max(nc.nc)), yaxt = "n", type = "S", 
+            cex = 0.7, xlab = "Fraction of data points included", 
+            ylab = "m(p)")
+        axis(2, at = c(0:max(nc.nc)))
+    }
+    if (profile2 & plot.it) {
+        par(mfrow = c(1, 2))
+        plot(pn, nc.nc, xlim = c(0, 1), ylim = c(0, max(nc.nc)), 
+            cex = 0.7, pch = 3, xlab = "Percentuale oss. incluse", 
+            ylab = "Numero di gruppi")
+        lines(pn, nc.nc)
+        plot(qn/max(fest), nc.nc, xlim = c(0, 1), ylim = c(0, 
+            max(nc.nc)), cex = 0.7, pch = 3, xlab = "Density level", 
+            ylab = "Number of groups")
+        lines(qn/max(fest), nc.nc)
+        par(mfrow = c(1, 1))
+    }
+    list(nc = nc.nc, p = pn, id = nc.id2, pq = cbind(p = pn, 
+        q = qn))
 }
 
 
-con2tree <- function(object, f, debug=FALSE){
+num.con.uni<-
+function (x, xd, pn = 0.9, profile = TRUE, profile.grid = 25, correct=FALSE,
+    profile2 = FALSE, qnv = 0, plot.it = FALSE) 
+{
+    x1 <- sort(x)
+    f <- xd@estimate[order(x)]
+    riordino <- rank(x)
+    ngrid <- profile.grid
+    if (profile) 
+        pn <- seq(0, 1, length = ngrid + 2)[-c(1, ngrid + 2)]
+    qn <- round(as.numeric(quantile(xd@estimate, 1 - pn)),15)
+    if (qnv != 0) 
+        qn <- qnv
+    xd.id <- (matrix(f, ncol = 1) %*% (1/qn)) >= 1
+    xd.id1 <- rbind(FALSE, xd.id, FALSE)
+    jumps <- apply(xd.id1, 2, diff)
+    which.jumps.ini <- which(rbind(jumps) > 0, arr.ind = TRUE)
+    which.jumps.fin <- which(rbind(jumps) < 0, arr.ind = TRUE)
+    num.con <- as.vector(table(which.jumps.ini[, 2]))
+    length.con <- split(which.jumps.fin[, 1] - which.jumps.ini[, 
+        1], which.jumps.ini[, 2])
+    lab.con.fun <- function(num.con, length.con) rep(1:num.con, 
+        times = length.con)
+    lab.con <- mapply(lab.con.fun, num.con, length.con)
+    y <- as.matrix(xd.id)
+    y[y] <- unlist(lab.con)
+    y[y == 0] <- -1
+    nc.id <- as.matrix(y[riordino, ])
+    if (correct) {
+        correct.id <- function(vec) {
+            t <- table(vec)
+            uni <- as.integer(names(t)[t == 1])
+            new <- vec
+            new[match(uni, vec)] <- -1
+            new[new!=-1] <- unclass(factor(new[new!=-1]))
+			new
+        }
+        nc.id <- apply(nc.id, 2, correct.id)
+    }
+    nc <- (apply(nc.id, 2, max))
+    nc[nc < 0] <- 0
+    names(nc) <- format(pn, digit = 3)
+#correzione 14/06/2011
+	#{
+	if (profile) {
+	newnames<- c("0",names(nc),"1")
+	nc<-c(0,nc,1)
+	names(nc)<-newnames
+	nc.id<-cbind(rep(-1,nrow(nc.id)),nc.id,rep(1,nrow(nc.id)))
+	#nc.id[which.max(xd@estimate)[1],1]<-1
+	pn<-c(0,pn,1)
+	qn<-c(max(xd@estimate),qn,min(xd@estimate))
+	}
+	#}
+    out <- list(nc = nc, p = pn, id = nc.id, pq = cbind(pn, qn))
+    if (profile & plot.it) {
+        plot(c(0, pn, 1, 1), c(0, nc, nc[length(nc)], 0), ylim = c(0, 
+            max(nc)), yaxt = "n", type = "S", cex = 0.7, xlab = "Fraction of included data points ", 
+            ylab = "m(p)")
+        axis(2, at = c(0:max(nc)))
+    }
+    if (profile2 & plot.it) {
+        par(mfrow = c(1, 2))
+        plot(pn, nc, xlim = c(0, 1), ylim = c(0, max(nc)), cex = 0.7, 
+            pch = 3, xlab = "Fraction of included data points ", 
+            ylab = "Number of groups")
+        lines(pn, nc)
+        plot(qn/max(xd@estimate), nc, xlim = c(0, 1), ylim = c(0, 
+            max(nc)), cex = 0.7, pch = 3, xlab = "Density level", 
+            ylab = "Number of groups")
+        lines(qn/max(xd@estimate), nc)
+        par(mfrow = c(1, 1))
+    }
+    out
+}
+
+
+#mia funzione modificata per capire e togliendo cose diventate inutili
+con2tree <- function(object, f){
   # object is the output of num.con()
   # f density estimate
   # 
+  ow <- options("warn")
   nc <- object$nc
   p <- object$p
-  index <- which(diff(nc) != 0)
-  ns <- length(index) # numero di punti di salto
-  ps <- p[index]      # frazione di dati inclusi ai vari punti di salto
-  lista <- list()     # lista degli insiemi connessi ai punti di salto
-  if(ns > 0)
-     for(j in 1:ns) lista[[j]] <-  as.vector(object$id[,index[j]])
-  else
-     lista[[1]] <-  as.vector(object$id[,ncol(object$id)])
-  if(debug){cat("con2tree\n"); browser()}
+  index <- which(diff(nc) != 0)         # posizione punti di salto
+  K <- length(index)  					# numero di punti di salto
+  ps <- p[index]      					# frazione di dati inclusi ai vari punti di salto
+  lista <- list()     					
+  if (K == 1){
+  gruppi <- as.vector(object$id[,ncol(object$id)])
+  M <-1 } else {
+  for(j in 1:K) lista[[j]] <-  as.vector(object$id[,index[j]])  # lista degli insiemi connessi ai punti di salto
   #...inizio della ex funzione groups(), qui in parte modificata
-  K <- length(lista)
-  gruppi <- rep(0,length(lista[[1]]))      
-  M <- 0          
+  gruppi <- rep(0,length(lista[[1]]))   #vettore di zeri di lunghezza pari a dim campionaria   
+  M <- 0                                 
   insiemi <- list()
   # passo con k=1
   k <- 1
-  sets <- lista[[k]]
-  sdiff <- setdiff(unique(sets), -1)
-  for (m in sdiff)
-      gruppi[which(sets==m)] <- M <- M+1
   allocated <- (gruppi>0)
   insiemi[[k]] <- setdiff(unique(gruppi),0)
-  if(debug){cat(">>> prima allocazione (k=1):\n")
-    print(table(gruppi))
-    cat(">>> insiemi[[1]] :", insiemi[[k]],"\n")         
-    # browser()
-  }
   # ciclo k=2,...,K
   while(k < K) {
     k <- k+1
-    sets  <- lista[[k]]
-    insieme <- list()
+    sets  <- lista[[k]]                #elenco connessi al salto k 
+    insieme <- list()                   
     for(m in 1:max(sets)) {
-      set <- which(sets==m)
-      new <- setdiff(set, which(allocated))
-      if(length(new)>0){
-        g.new <- unique(gruppi[intersect(set, which(allocated))])
-        if(debug)  { cat(">>> g.new:", g.new,"\n");  browser() }
+      set <- which(sets==m)            #quali elementi fanno parte della componente connessa m         
+      new <- setdiff(set, which(allocated))    #quali elementi della compon connessa m non erano ancora stati allocati
+      if(length(new)>0){               #se ci sono nuovi elementi  
+        g.new <- unique(gruppi[intersect(set, which(allocated))]) # quali sono i gruppi di appartenenza di chi appartiene alla componente connessa m ed è già stato allocato
         if(length(g.new) == 0)  gruppi[set] <- M <- M+1           
         if(length(g.new) == 1)  gruppi[set] <- g.new 
         allocated <- (gruppi>0)
         }
       gg <- sort(setdiff(unique(gruppi[set]),0))
       if(length(gg)>0) insieme[[length(insieme)+1]] <- gg 
-      if(debug){ print(table(gruppi));    browser()}
     }
     insiemi[[k]] <- insieme
-    if(debug) { 
-        cat("****** fine ciclo k-mo, k=", k,"\n"); 
-        print(insieme)
-        cat("***************************\n")
-     }
-  }
+    }
   if(!missing(f)){
-    if(debug) cat("re-assign labels, according to pdf highest value\n")
     u <- unique(gruppi[rev(order(f))])
     g <- rep(0,length(f))
     u0 <- u[u>0]
     for(i in 1:max(gruppi)) g[gruppi==u0[i]] <- i
     gruppi <- g
-    if(debug){
-      cat("densita` massime dei gruppi 1...M,0:\n")
-      for(m in c(1:M,0)) print(c(m, max(f[gruppi==m])))
-     }
-  } #..fine ex funzione groups()
-  if(debug) cat("--------fine fase 1, inizia albero\n")
-  salti <- diff(c(0,nc))
+    } #..fine ex funzione groups()
+  }
+  #prima era: salti <- diff(c(0,nc))
+  salti <- diff(nc)
   salta.giu <- rev(which(diff(nc)[index]<0))
   altezza <- numeric(M)
   m <- 0
   salti.su <- salti[salti>0]
-  ow <- options("warn")
-      options(warn = -1)
+       options(warn = -1)
   while(m <M){
     m <- m+1
-    # altezza[m] <- p[1] * (which(cumsum(salti.su) >= m)[1] - 1)
     r <- min(which(cumsum(salti.su) >= m))
     altezza[m] <- p[salti>0][r]
   }
-  if(debug){ cat("altezza:",altezza,"\n");   browser()}
   bad.grid <- any(is.na(altezza))
-  sotto.albero <- function(tree, k, set,  debug=FALSE){
+  sotto.albero <- function(tree, k, set){
       insieme <- insiemi[[salta.giu[k]]]      
       r <- 0
       branch <- list()
-      if(debug){
-        cat("*** inizia sotto.albero, livello k:", k,"\n")
-        print(insieme)
-        browser()
-      }
-     for(item0 in insieme){
+      for(item0 in insieme){
         item <- intersect(set, unlist(item0))
-        if(debug){
-          cat("**** k, r:", k, r,"\n")
-          cat("item:", item,"\n") 
-          cat("set:", set,"\n") 
-        }
         if(length(item)==1){
           r <- r+1
           u <- item
@@ -553,10 +525,8 @@ con2tree <- function(object, f, debug=FALSE){
           attr(u,"label")  <- paste(as.character(item), " ", sep="")
           attr(u,"leaf")   <- TRUE
           branch[[r]] <- u
-
         }     
       if(length(item) > 1) {
-
         r <- r+1
         u <- sotto.albero(list(), k+1, item)
         attr(u,"members") <- length(unlist(item))
@@ -567,28 +537,37 @@ con2tree <- function(object, f, debug=FALSE){
         # browser()
       }
       }
-      if(debug){
-        cat("***branch[k]:", k,"\n")
-        print(branch)
-        browser()
-      }
       branch
     }        
-  tree <- sotto.albero(list(), 1, 1:M,  debug=debug)
-  attr(tree, "members") <- M
-  attr(tree, "height") <-  max(ps[salta.giu[1]])
-  attr(tree, "label") <- paste("{", paste(1:M, collapse=","),"}", sep="")
-  tree <- list(tree)
-  attr(tree, "members") <- M
-  attr(tree, "height") <- 1
-  if (M > 1) {attr(tree, "class") <- "dendrogram"
-  ctrl <- FALSE } else ctrl <- TRUE 
-  if(debug) browser()
-    options(warn = -1)
-  invisible(list(g=gruppi, sets=insiemi, tree=tree, bad=bad.grid, ctrl=ctrl))
+  if(M > 1) {
+	tree <- sotto.albero(list(), 1, 1:M)
+	attr(tree, "members") <- M
+	attr(tree, "height") <-  max(ps[salta.giu[1]])
+	attr(tree, "label") <- paste("{", paste(1:M, collapse=","),"}", sep="")
+	noc <- M } else {
+	#bassi.connect<- object$id[ ,(ncol(object$id)-1)] # quando c'è un solo gruppo i cores saranno tutti gli allocati alla più bassa sezione considerata della densità 
+	#gruppi[bassi.connect>0] <- bassi.connect[bassi.connect>0] 
+	tree <- list()
+	tree[[1]]<-1
+	attr(tree[[1]], "members") <- 1
+	attr(tree[[1]], "height") <- 0
+	attr(tree[[1]], "label") <- "1"
+	attr(tree[[1]], "leaf") <- TRUE
+    attr(tree,"members")<-1
+	attr(tree,"height")<-1
+	attr(tree,"label")<-paste("{", paste(1, collapse=","),"}", sep="")
+	noc <- 1
+	}
+	tree <- list(tree)
+	attr(tree, "members") <- M
+	attr(tree, "height") <- 1
+    attr(tree, "class") <- "dendrogram"
+  options(warn = ow$warn)
+  invisible(list(g=gruppi, tree=tree, bad=bad.grid, noc=noc))
  }
 
-pdfCluster <- function(x, h=h.norm(x), hmult=.75, n.grid=min(50,nrow(as.matrix(x))), n.stage=5,  debug=FALSE){
+ 
+pdfCluster <- function(x, h=h.norm(x), hmult=.75, n.grid=min(50,nrow(as.matrix(x))), n.stage=5){
   x <- data.matrix(x)
   pdf <- kepdf(x=x, h=h*hmult, eval.points=x)
   estimate <- pdf@estimate
@@ -599,13 +578,13 @@ pdfCluster <- function(x, h=h.norm(x), hmult=.75, n.grid=min(50,nrow(as.matrix(x
   }
   pn <- seq(0,1,length=n.grid+2)[-c(1,n.grid+2)]
   nc <- num.con(x, pdf, profile.grid=n.grid-1, correct=TRUE, plot.it=FALSE)
-  struct <- con2tree(nc, estimate,  debug=debug)
+  struct <- con2tree(nc, estimate)
   if(struct$bad){
     message("No output given"); message("The grid is too coarse: re-run with larger value of 'n.grid' or with larger value of 'hmult'") } else{
   g <- struct$g
   g[struct$g==0] <- NA
   out <- new("pdfCluster", call=match.call(), x=data.matrix(x), estimate=estimate, h=h, hmult=hmult, nc=nc,  
-              cluster.cores=g, tree=struct$tree, ctrl= struct$ctrl, stages=NULL, clusters=NULL)
+              cluster.cores=g, tree=struct$tree, noc= struct$noc, stages=NULL, clusters=NULL)
   if(n.stage> 0) 
     {out <- pdfClassification(out, n.stage=n.stage)
 	}  
@@ -616,7 +595,8 @@ summary.pdfCluster <- function(object,...){
  new("summary.pdfCluster", obj.class=class(object)[1], cluster.cores=object@cluster.cores, clusters=object@clusters, tree=object@tree)
 }
 
-pdfClassification <- function(obj, h.funct="h.norm", n.stage=5){
+
+pdfClassification<-function(obj, h.funct="h.norm", n.stage=5){
   x <- obj@x
   if (missing(h.funct)) h0 <- obj@h else {
   h.fn <-  get(h.funct, inherit = TRUE)
@@ -626,18 +606,25 @@ pdfClassification <- function(obj, h.funct="h.norm", n.stage=5){
   g <- obj@cluster.cores
   n <- length(g)
   g[is.na(g)] <- 0
-  M <- max(g)
-	if (obj@ctrl) {
-	obj@cluster.cores[g==0] <- 1
-	for (stage in 1:n.stage) lista[[stage]] <- rep(1, nrow(x))} else{
-  for(stage in 1:n.stage){
+  M <- obj@noc
+        if (obj@noc==1) {
+        obj@cluster.cores[g==0] <- 1
+        for (stage in 1:n.stage) lista[[stage]] <- rep(1, nrow(x))} else{
+  stage <- 1
+  while(stage <= n.stage){
   unallocated <- which(g==0)
   f <- matrix(NA, nrow=sum(g==0), ncol=M)
   for(m in 1:M){
     h <- h0 * hmult * (1 + (stage)/n.stage)
-	f[,m] <- kepdf(x=x[g==m,], h=h, eval.points=x[g==0,])@estimate
+        f[,m] <- kepdf(x=x[g==m,], h=h, eval.points=x[g==0,])@estimate
   }
-  ind.max <- t(apply(f, 1,order)[rev(1:M),])#at each line decreasing sort
+  #check for outliers; if there exist data points with f[,m]==0 for all m
+  #remove them from classification
+  unalloc.outliers<-(apply(f,1,sum)==0)
+  #ind.outliers<-unallocated[unalloc.outliers]#serve?
+  unallocated <- unallocated[!unalloc.outliers]
+  f<-matrix(f[!unalloc.outliers,],ncol=M)
+  ind.max <- t(apply(f, 1,order)[rev(1:M),]) #at each line decreasing sort
   i1 <- ind.max[,1]
   i2 <- ind.max[,2]
   f1 <- diag(as.matrix(f[,i1]))
@@ -646,28 +633,32 @@ pdfClassification <- function(obj, h.funct="h.norm", n.stage=5){
   if(stage < n.stage){
     alti <- (log.ratio >= quantile(log.ratio, (n.stage-stage)/n.stage))
     # alti <- alti & (pmax(f1,f2)> 0.33 * rep(max(c(f1,f2)), length(alti)))
-    }
-  else
-    alti <- rep(TRUE, sum(g==0))
+    }   else  {alti <- rep(TRUE, (sum(g==0)-sum(unalloc.outliers)))}
   g.alti <-  ind.max[alti,1]
   for(m in 1:M){
     nuovi <- unallocated[alti][g.alti==m]
     g[nuovi] <- m
     }
   lista[[stage]] <- g
-  }}
+  if (sum(g==0)==0 & stage < n.stage){
+  message(paste("Classification accomplished in", stage, "stages"))
+  n.stage <-stage
+  }
+  stage<- stage +1
+  }
+  if(any(unalloc.outliers)) warning(cat(sum(unalloc.outliers), "outliers have been found and not classified", "\n"))
+  }
   #browser()
   unlista <- unlist(lista)
   unlista[unlista==0] <- NA
   obj@stages <- split(unlista,rep(1:n.stage,each=nrow(x)))
   obj@clusters <- lista[[n.stage]]
-  obj
-}
+  obj}
+
 
 
 plot.pdfCluster <- function(x, y, which=1:4, stage=Inf, pch=NULL, col=NULL, ...){
-  if (is.element(2, which) & x@ctrl) which <- setdiff(which, 2)
-  if (is.element(4, which) & x@ctrl) which <- setdiff(which, 4)
+  if (is.element(4, which) & x@noc==1) which <- setdiff(which, 4)
   w12 <- sort(which)[1:min(2,length(which))]
   if(setequal(1:2,w12)) par(mfrow=c(1,2))
   if(is.element(1, which)){
@@ -748,6 +739,93 @@ if(sum(which<4)) {
   invisible()
 }
 
+plot.pdfCluster <- function(x, y, which=1:4, stage=Inf, pch=NULL, col=NULL, ...){
+  if (is.element(4, which) & x@noc==1) which <- setdiff(which, 4)
+  w12 <- sort(which)[1:min(2,length(which))]
+  if(setequal(1:2,w12)) par(mfrow=c(1,2))
+  if(is.element(1, which)){
+     nc <- x@nc$nc
+     p <- x@nc$p
+     plot(c(0,p,1,1), c(0,nc,nc[length(nc)],0), 
+           ylim=c(0,max(nc)), yaxt="n", type="S", cex=0.7,
+           xlab="fraction of data points",
+           ylab="mode function", ...)
+     axis(2,at=c(0:max(nc)))
+  }
+  if(is.element(2, which)) {
+    plot(x@tree, center=TRUE, ...)
+    title(sub="groups tree")
+    }
+  if(setequal(1:2,w12)) par(mfrow=c(1,1))
+ # if(length(setdiff(which,w12)) > 0) {
+  #if(length(setdiff(w12,c(3,4))) > 0 ) {
+ #    cat("press <enter> to continue...")
+ #    readline()
+ #  }
+  if(is.element(3, which))    {
+    #browser()  
+	if(sum(which<3)) {
+     cat("press <enter> to continue...")
+     readline()
+   }
+    stage <- min(stage, length(x@stages))
+    if(stage==0) {g <- x@cluster.cores; g[is.na(x@cluster.cores)] <- 0}
+    else {g <- x@stages[[stage]]; g[is.na(x@stages[[stage]])] <- 0} 
+	dat <- x@x
+    M <-  length(table(g))
+    if (is.null(pch)) #|(length(pch) < M & length(pch) > 1)) {
+	pch <- as.character(g)
+	if (length(pch) < M & length(pch) > 1) warning("pch argument should have length 1 or equal to the number of clusters")
+	if(length(pch) > 1){ 
+	newpch <- as.factor(g)
+	levels(newpch) <- rep(levels(as.factor(pch)), length(levels(as.factor(pch))))[1:M]
+	if (is.numeric(pch)) pch <- as.numeric(as.character(newpch)) else pch <- as.character(newpch)
+	} 
+	if (is.null(col)){#|(length(col) < M & length(col) > 1)) {
+	col=g 
+	if (0 %in% g) {
+	g0<- g
+	g0[g0==0]<-x@noc+1	
+	col=g0
+	}	
+	} 
+	if (length(col) < M & length(col) > 1) warning("col argument should have length 1 or equal to the number of clusters")
+	if(length(col) > 1){ 
+	newc <- col
+	newc <- as.factor(newc)
+	levels(newc) <- rep(levels(as.factor(col)), length(levels(as.factor(col))))[1:M]
+	if (is.numeric(col)) col <- as.numeric(as.character(newc)) else col <- as.character(newc)
+	}
+	if(ncol(dat)==1){
+	if(is.null(list(...)$add))  plot(dat[,1], pch=pch, col=col, cex=.75, ylab="x", ...)
+#	if(is.null(list(...)$add))  plot(dat[,1], type="n", ...)
+#    for(m in 0:M) {
+#      gr <- (g==m)
+#      if(m==0) points(seq(along=x)[gr], dat[gr,],  pch=0, cex=0.2)
+#      else points(seq(along=x)[gr], dat[gr,], pch=m, col=m+1, cex=0.75)
+#      } 
+	} else if (ncol(dat)==2){
+if(is.null(lab <- colnames(dat))) {lab <- paste(rep("V", ncol(dat)), 1:ncol(dat), sep="")}	
+if(is.null(list(...)$add))  plot(dat, pch=pch, col=col, xlab=lab[1], ylab=lab[2], cex=.75, ...)
+#	if(is.null(list(...)$add))  plot(dat[,coord], type="n", ...)
+#    for(m in 0:M) {
+#      gr <- (g==m)
+#      if(m==0) {pch=pch[1]; points(dat[gr,coord],  pch=pch , cex=0.2)}
+#      else points(dat[gr,coord], pch=pch[m], col=m, cex=0.75)
+#      }
+	  } else pairs(dat, pch=pch, col=col, ...)
+  }
+    if(is.element(4, which))    {
+if(sum(which<4)) {
+     cat("press <enter> to continue...")
+     readline()
+   }
+   plot(dbs(x))
+   }
+  #browser()
+  invisible()
+}
+
 dbs.cluster <- function(x, clusters, h.funct="h.norm", hmult=0.75, prior, ...){
 x <- as.matrix(x)
 h.fn <- get(h.funct, inherit = TRUE)
@@ -757,6 +835,7 @@ lik.fine <- matrix(NA,nrow=nrow(x),ncol=M)
 if(missing(prior)) prior <- rep(1/M,M) 
 for(m in 1:M){
 	h=(h.fn(x=x[clusters==m,]))
+	if (sum(h==0)>0) h[h==0]<-1e-10 
 	lik.fine[,m] <- kepdf(x=x[clusters==m,],h=h*hmult, eval.points=x, ...)@estimate
 	}
 ind <- t(t(lik.fine)*prior)
@@ -787,6 +866,7 @@ lik.fine <- matrix(NA,nrow=nrow(y),ncol=M)
 if(missing(prior)) prior <- rep(1/M,M) 
 for(m in 1:M){
 	h=(h.fn(x=y[clusters==m,]))
+	if (sum(h==0)>0) h[h==0] <- 1e-10 
 	lik.fine[, m] <- kepdf(x=y[clusters==m, ],h=h*hmult, eval.points=y, ...)@estimate
 	}
 ind <- t(t(lik.fine)*prior)
@@ -953,9 +1033,9 @@ setMethod("show",signature("pdfCluster"), function(object){
 	cat("Density estimate at data points: ", "\n")
 	print(object@estimate)
 	cat("\n")
-    if (class(object@tree)=="dendrogram") {cat("Groups tree:\n")
+    cat("Groups tree:\n")
 	str(object@tree)
-	cat("\n")}
+	cat("\n")
   	cat("Initial groupings:", "\n")
       print(object@cluster.cores)
     cat("\n")

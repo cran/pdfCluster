@@ -8,19 +8,20 @@ Cluster analysis is performed by the density-based procedure described in Azzali
 }
 \usage{
 pdfCluster(x, h = h.norm(x), hmult = 0.75,
-     n.grid = min(50, nrow(as.matrix(x))), n.stage = 5, debug = FALSE)
+     n.grid = min(50, nrow(as.matrix(x))), n.stage = 5)
 }
 \arguments{
   \item{x}{
-A vector, or a matrix of data to be partitioned.  
+A vector, a matrix or a data frame of numeric data to be partitioned.  
 }
   \item{h}{
-A vector with length set to the same dimension as \code{x}, defining the smoothing parameters to be used 
+A vector with length equal to \code{ncol(x)} (or 1, if \code{x} is a
+vector), defining the smoothing parameters to be used 
 to estimate density of data by kernel methods. An asymptotically
  normal optimal smoothing parameter is used as a default argument. 
 }
   \item{hmult}{
-Shrink factor to be multiplied by the smoothing parameters. Default value is 0.75.
+Shrink factor with length 1, applied to \code{h}. Default value is 0.75.
 }
   
   \item{n.grid}{
@@ -33,9 +34,6 @@ set to the minimum between 50 points and the number of rows data.
 Allocation of low density data is performed by following a multi-stages procedure in \code{n.stage} steps through an internal call
 to \code{\link{pdfClassification}}. Default value is set to 5. Set the parameter to zero to detect the cluster cores only. See details below.
   }
-  
-  \item{debug}{
-Logical, if TRUE the clustering procedure is debugged.}
 }
 
 \details{
@@ -48,28 +46,28 @@ Clusters are defined as high density regions. Any section of the density \eqn{f}
  The allocation of lower density data is subsequently performed by following a multi-stages supervised classification-like approach.  
   }
 \value{
-An S4 object of \code{\link{pdfCluster-class}} whose slots are:
-  \item{call }{The mathced call.}
+An S4 object of \code{\link{pdfCluster-class}} with slots:
+  \item{call }{The matched call.}
   \item{x }{The matrix of data input (if a vector of data is provided as input, a one-column matrix is returned as output).}
-  \item{estimate }{Vector of kernel estimates of the data points.}
+  \item{estimate }{Vector of density estimate evaluated at the data points.}
   \item{h }{Vector of smoothing parameters used to estimate the probability density function.}
   \item{hmult }{Shrink factor multiplied by the smoothing parameters.}
   \item{nc }{An object of class list defining details about the identification of the connected regions. It includes:
   \itemize{
-   \item \code{nc} Number of connected for each value of section of the desnity estimate, corresponding to the values of \code{p}.
+   \item \code{nc} Number of connected for each value of section of the density estimate, corresponding to the values of \code{p}.
    \item \code{p}  Vector of proportions of data with estimated density below a threshold.
    \item \code{id} Group label at each point for different sections of the density estimate, corresponding to the values of \code{p}. 
 					Negative values of \code{id} means that the estimated density is below the considered threshold.
    \item \code{pq} For each \code{p} gives the corresponding quantile \code{q} of the values of the density
   }}
   \item{cluster.cores }{Vector with the same length as the length (or number of rows) of \code{x}, defining the cluster cores membership. 
-						NA values correspond to low density, unlabeled data, to be classified in the second phase of the procedure by calling \code{\link{pdfClassification}};}
+						\code{NA} values correspond to low density, unlabeled data, to be classified in the second phase of the procedure by calling \code{\link{pdfClassification}};}
   \item{tree }{Hierarchical structure in the form of a cluster tree with leaves corresponding to the connected components associated to different sections of the density estimate.
-  The object has class \code{\link[stats:dendrogram]{dendrogram}} when the tree has more than one leaf, that is when density estimate presents more than one mode.}             
-  \item{ctrl }{Logical, set to FALSE if tree has class \code{\link[stats:dendrogram]{dendrogram}}, TRUE otherwise.}
+  The object has class \code{\link[stats:dendrogram]{dendrogram}}.}             
+  \item{noc }{number of clusters.}
   \item{stages }{List with elements corresponding to the data allocation to groups at the different stages of the classification procedure.
-   NA values correspond to unlabeled data.}
-  \item{clusters }{set to NULL if the n.stages=0, that is, if data belonging to the cluster cores only have been allocated. 
+   \code{NA} values correspond to unlabeled data.}
+  \item{clusters }{set to \code{NULL} if the n.stages=0, that is, if data belonging to the cluster cores only have been allocated. 
   Otherwise it reports the final label groups.}	
   }
   
@@ -106,10 +104,10 @@ plot(cl)
 table(cl@clusters,gr)
 
 ###########
-# This code reproduces example in Section 4.3 of Azzalini and Torelli (2007). 
-# A slightly different from the mentioned example (but closer to the original)  
-# partition is obtained probably because of the use of a different set of 
-# parameters whose trace has been lost.
+# The code below essentially reproduces the example in Section 4.3 of
+# Azzalini and Torelli (2007), up to a minor difference, presumably due
+# to a slightly different choice of the tuning parameters, whose trace
+# has been lost.
 
 #loading data
 data(oliveoil)

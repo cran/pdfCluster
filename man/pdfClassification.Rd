@@ -26,11 +26,13 @@ Allocation of low density data is performed by following a multi-stages procedur
 The basic idea of the classification stage of the procedure is as follows: for an unallocated data point \eqn{x_0},
 compute the estimated density \eqn{\hat{f}_m(x_0)} based on the data already assigned to group \eqn{m, m = 1, 2, \ldots, M},
  and assign \eqn{x_0} to the group with highest ratio \eqn{\frac{\hat{f}_m(x_0)}{max_m \hat{f}_m(x_0)}}. 
-The current implementation of this idea proceeds in a block-sequential manner, allocating several points at a time,
+In case \eqn{\hat{f}_m(x_0)}=0, \eqn{m, m = 1, 2, \ldots, M}, \eqn{x_0} is considered as an outlier. The procedure gives a warning 
+message and the outlier remains unclassified. The cluster label of \eqn{x_0} will be set to zero.   
+ The current implementation of this idea proceeds in a block-sequential manner, allocating several points at a time,
  updating the estimates \eqn{\hat{f}_m(\cdot)} based on the new members of each group and then allocating a new block of points. 
-}
+ }
 \value{
-An object of \code{\link{pdfCluster-class}} with slot \code{stages} non NULL and of class \code{"list"}. 
+An object of \code{\link{pdfCluster-class}} with slot \code{stages} non \code{NULL} and of class \code{"list"}. 
 See \code{\link{pdfCluster-class}} for further details.  
 }
 \references{
@@ -42,7 +44,7 @@ Azzalini A., Torelli N. (2007). Clustering via nonparametric density estimation.
 \note{ 
 Function \code{\link{pdfClassification}} may be called both internally, from \code{\link{pdfCluster}}, by setting the argument
 \code{n.stage} greater than zero, or externally, by providing as argument an object of \code{\link{pdfCluster-class}} whose slot
-\code{stages} is NULL.
+\code{stages} is \code{NULL}.
 
 When \code{\link{pdfClassification}} is internally called from \code{\link{pdfCluster}} and one group only is detected, 
 the slot \code{stages} is a list with \code{n.stage} elements, each of them being a vector with length set to the number of data and set all to 1.
