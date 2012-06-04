@@ -10,11 +10,11 @@ citEntry(entry="manual",
 			         as.person("T. Rosolin")),
 address = "Universit\\`a di Padova, Italia",
 year = substr(meta$Date, 1, 4),
-url = "http://cran.r-project.org/package=pdfCluster",
+url = "http://cran.r-project.org/web/packages/pdfCluster/index.html",
 textVersion = 
 paste("Azzalini, A., Menardi, G., Rosolin, T. (", substr(meta$Date, 1, 4), "). ",
 "R package 'pdfCluster': Cluster analysis via nonparametric density estimation", " (version ", meta$Version, "). ",
-"URL http://cran.r-project.org/package=pdfCluster",
+"URL http://cran.r-project.org/web/packages/pdfCluster/index.html",
 sep="")
 )
 

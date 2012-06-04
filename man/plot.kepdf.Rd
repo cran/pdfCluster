@@ -1,30 +1,25 @@
-\name{plot.kepdf}
-\alias{plot.kepdf1d}
-\alias{plot.kepdf2d}
-\alias{plot.kepdfdd}
+\name{plot,kepdf-method}
+\docType{methods}
+%\alias{plot.kepdf1d}
+%\alias{plot.kepdf2d}
+%\alias{plot.kepdfdd}
 \alias{plot.kepdf}
+\alias{plot,kepdf-method}
+%\alias{plot,kepdf,ANY-method}
 \alias{plot,kepdf,missing-method}
 \title{
 Plot objects of class kepdf
 }
 \description{
-Function and methods for plotting objects of \code{\link{kepdf-class}}
+Functions and methods for plotting objects of \code{\link{kepdf-class}}.
 }
 
 \usage{
-plot.kepdf1d(x, y, eval.points=NULL, n.grid=50, data=NULL, 
-	add=FALSE, main	= NULL, xlab=NULL, ylab=NULL, col=NULL,
-	col.data=2, type="l", ...)
-
-plot.kepdf2d(x, y, eval.points=NULL, n.grid=c(30,30), data=NULL,
-	add=FALSE, main=NULL, xlab=NULL, ylab=NULL, zlab=NULL, 
-	col=NULL, col.data=2, props=c(75,50,25), method="contour", 
-	ticktype = "detailed", ...)
-
-plot.kepdfdd(x, y, ..., main=NULL, method="contour", 
-	text.diag.panel = NULL, gap = 0.5)
-
-plot.kepdf(x, y, ...)
+\S4method{plot}{kepdf}(x, y, eval.points = NULL, n.grid = NULL,
+		data = NULL, add = FALSE, main = NULL, xlab = NULL, ylab = NULL, 
+		zlab = NULL, col = NULL, col.data=2, type="l", props = c(75,50,25), 
+		method="contour", ticktype = "detailed", indcol = NULL, 
+		text.diag.panel = NULL, gap = 0.5, ...)
 }
 \arguments{
   \item{x}{
@@ -58,6 +53,7 @@ multidimensional data only.}
 have been used to estimate the density.}
 \item{ticktype}{Character: "simple" draws just an arrow parallel to the axis to indicate direction of increase;
  "detailed" draws normal ticks; to be used if \code{method="perspective"} only.}
+\item{indcol}{vector of the column positions to be plot, when densities are estimated on higher than 2-dimensional data.} 
 \item{text.diag.panel}{Text to be displayed on the diagonal panels when plotting densities estimated on higher than 2-dimensional data.}
 \item{gap}{Distance between subplots, when plotting densities estimated of 2-dimensional data or higher-dimensional data.}
   \item{\dots}{
@@ -68,8 +64,8 @@ Further arguments to be passed to \code{plot}, \code{image}, \code{contour}, \co
 When density estimates is based on two or higher dimensional data, these functions make use of functions \code{\link[graphics:contour]{contour}},
 \code{\link[graphics:image]{image}} and \code{\link[graphics:persp]{persp}}. 
 % from package \code{\link[graphics:graphics-package]{graphics-package}}.
-For densities estimated on higher than 2-d data, the paiwaise marginal estimated densities are plotted for alle the possible couple of
-coordinates.
+For densities estimated on higher than 2-d data, the pairwise marginal estimated densities are plotted for all
+the possible pairs of coordinates or a selection of them.
 }
 \value{
 A list containing the following elements:
@@ -81,27 +77,18 @@ A list containing the following elements:
 \describe{
 \item{\code{signature(x = "kepdf", y = "missing")}}{
 
-S4 method for plotting objects of \code{\link{kepdf-class}}}
+S4 method for plotting objects of \code{\link{kepdf-class}}.}
 }
 }
 
-%%\references{
-%% ~put references to the literature/web site here ~
-%%}
-%%\author{
-%%  ~~who you are~~
-%%}
-%%\note{
-%%  ~~further notes~~
-%%}
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
 \code{\link{kepdf-class}}, \code{\link[graphics:plot]{plot}}, 
-\code{\link[graphics:contour]{contour}}, \code{\link[graphics:image]{image}},
- \code{\link[graphics:persp]{persp}}
+\code{\link[graphics:contour]{contour}}, \code{\link[graphics:image]{image}}, 
+\code{\link{plot-methods}},\code{\link[graphics:persp]{persp}}
 }
+
 \examples{
 #1-d example
 set.seed(123)
@@ -112,7 +99,8 @@ pdf1a <- kepdf(x1)
 #shrink the smoothing parameter
 pdf1b <- kepdf(x1, h=0.5*h.norm(x1))
 
-plot(pdf1a, n.grid=50, data=x1, xlab="x1", ylim=c(0, max(c(pdf1a@estimate, pdf1b@estimate))))
+plot(pdf1a, n.grid=50, data=x1, xlab="x1", ylim=c(0, max(c(pdf1a@estimate,
+   pdf1b@estimate))))
 plot(pdf1b, n.grid=50, lty=2, add=TRUE)
 
 #2-d example

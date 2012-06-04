@@ -5,48 +5,42 @@ importFrom("graphics", plot)
 
 export("adj.rand.index",
 	"dbs",
-       "dbs.pdfCluster",
-	#"connnected.comp",
-      "h.norm",
-       "kepdf",                
-	# "lines.kepdf",
-    #   "num.con",              
-	 "pdfClassification",
-     	 "pdfCluster",
-	# "plot",
-	 "plot.pdfSilhouette",
-       "plot.kepdf",
-	 "plot.kepdf1d",
-	 "plot.kepdf2d",
-       "plot.kepdfdd",
-	 "plot.pdfCluster",      
-	# "plot.qdelaunay",
-	# "qdelaunay",
-      "summary.kepdf",
-      "summary.pdfCluster",   
-      "summary.pdfSilhouette"
-	#"summary.qdelaunay"
+    #"dbs.pdfCluster",
+    "h.norm",
+	"hprop2f",
+	"kepdf",
+   	"pdfClassification",
+    #"pdfCluster.data",
+	#"pdfCluster.graphpairs",
+	"plot.dbs",
+    "plot.kepdf",
+	#"plot.kepdf1d",
+	#"plot.kepdf2d",
+    #"plot.kepdfdd",
+	"plot.pdfCluster"      
+    #"summary.kepdf",
+    #"summary.pdfCluster",   
+    #"summary.dbs"
 )
 
 exportMethods(
-    #"connnected.comp",
     "dbs",
-    #"h.norm",
-    #"lines",
-    #"num.con",
-    "plot",
-    "show" 
+    "pdfCluster",
+	"plot",
+    "summary",
+	"show" 
 )
 
+#S3method(plot     , kepdf)
+#S3method(plot     , pdfCluster)
+#S3method(plot     , dbs)
+
 exportClasses(
-    # "dendrogram",
      "kepdf",
      "pdfCluster",
-     "pdfSilhouette",
-    # "qdelaunay",
-     "summary.kepdf",
-     "summary.pdfCluster",
-     "summary.pdfSilhouette"
-    # "summary.qdelaunay" 
+     "dbs"
+     #"summary.kepdf",
+     #"summary.pdfCluster",
+     #"summary.dbs"
 )
 

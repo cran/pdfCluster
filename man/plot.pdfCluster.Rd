@@ -1,17 +1,19 @@
-\name{plot.pdfCluster}
+\name{plot,pdfCluster-method}
+\docType{methods}
 \alias{plot.pdfCluster}
+\alias{plot,pdfCluster-method}
 \alias{plot,pdfCluster,missing-method}
 
 \title{
 Plot objects of class pdfCluster
 }
 \description{
-Function and methods for plotting objects of \code{\link{pdfCluster-class}}
+Functions and methods for plotting objects of \code{\link{pdfCluster-class}}.
 }
 \usage{
-plot.pdfCluster(x, y, which = 1:4, stage = Inf, pch = NULL, col = NULL, ...)
+\S4method{plot}{pdfCluster}(x, y, which = 1:4, stage = Inf, pch = NULL, col = NULL, ...)
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
   \item{x}{
 An object of \code{\link{pdfCluster-class}};
@@ -24,8 +26,8 @@ To be used to select the type of plot: \itemize{
 		\item when \code{which = 1} plots the mode function, corresponding to the number of modes for different proportions of data points with density above a threshold. 
 		\item when \code{which = 2} plots the cluster tree associated to different sections of
 			the density estimate.
-		\item when \code{which = 3} displays the scatterplot of data or of all the possible couples of coordinates reporting the label group. 
-		\item when \code{which = 4} displays the \code{\link{pdfCluster-class}} 
+		\item when \code{which = 3} displays the scatterplot of data or of all the possible pairs of coordinates reporting the label group. 
+		\item when \code{which = 4} the \code{\link{plot.dbs}} is displayed. 
 		}
 Multiple choices are possible.  
   }
@@ -42,7 +44,7 @@ Colors to be used in plotting points. If a vector of the same length as the numb
 different colors or characters are used for different groups. The default value use colors in palette corresponding to the the 
 group labels of the data. This argument applies if \code{which=3} only.}
   \item{\dots}{
-urther arguments to be passed to \code{\link{plot-methods}}.}
+Further arguments to be passed to \code{\link{plot-methods}}.}
 }
 %\details{
 %If necessary, more details than the description above

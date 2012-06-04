@@ -4,28 +4,67 @@ version 0.1-8 (Feb.2011):
 
 version 0.1-9 (2011-03-31)
  - included a function to compute the adjusted Rand index of two partitions
- - included the density-based Silhouette plot as possible option when displaying objects of class pdfCluster.
+ - included the density-based Silhouette plot as possible option when 
+ displaying objects of class pdfCluster
 
 version 0.1-10 (2011-06-10)
  - fixed a bug in pdfClassification
- - included the possibility to match argument in choosing a method for plotting objects of class kepdf
- - changed the default colors to be used when plotting objects of class pdfSilhouette. 
+ - included the possibility to match argument in choosing a method for plotting
+ objects of class kepdf
+ - changed the default colors to be used when plotting objects of class 
+ pdfSilhouette 
  - added the Call of the function in the Show-methods for function pdfCluster
- - fixed a bug in function dbs, occurring when some posterior probabilities are numerically estimated as zero 
+ - fixed a bug in function dbs, occurring when some posterior probabilities 
+ are numerically estimated as zero 
 
 version 0.1-11 (2011-06-16)
- - fixed a bug in the procedure for finding high-density connected regions, occurring when groups are so well separated that more than 
-   one connected region are founded for any of the n.grid thresholds of the density estimate
- - included a message to be printed when classification of low-density data points is accomplished in less than n.stage stages. 
+ - fixed a bug in the procedure for finding high-density connected regions, 
+ occurring when groups are so well separated that more than one connected 
+ region are founded for any of the n.grid thresholds of the density estimate
+ - included a message to be printed when classification of low-density data 
+ points is accomplished in less than n.stage stages. 
 
 version 0.1-12 (2011-06-27)
- - found a bug in function "quantile". Given a vector of ordered probabilities, it may return unsorted quantiles (at the 16th digit).    fixed by rounding to the 15th digit the values of function "quantile".
+ - found a bug in function "quantile". Given a vector of ordered probabilities,
+ it may return unsorted quantiles (at the 16th digit). Fixed by rounding to the
+ 15th digit the values of function "quantile".
  - some minor changes in documentation. 
 
 version 0.1-13 (2011-06-29)
- - extended the class "dendrogram" to the slot "tree" of objects of class pdfCluster, also when 1 cluster only is found. As a consequence,
-   plotting the cluster tree is now possible even in this case.
+ - extended the class "dendrogram" to the slot "tree" of objects of class 
+ pdfCluster, also when 1 cluster only is found. As a consequence,
+ plotting the cluster tree is now possible even in this case
  - removed the slot "ctrl" from objects of class pdfCluster
  - included the slot "noc" in objects of class pdfCluster
- - included a control in pdfClassification: outliers with zero estimated conditional density of belonging to the detected groups are now    excluded from the classification  
-  
+ - included a control in pdfClassification: outliers with zero estimated 
+ conditional density of belonging to the detected groups are now excluded from
+ the classification  
+
+version 1.0-0 (2012-04-20)
+  Warning: major modifications of the pdfCluster package. 
+  Old codes might not work or produce different results!
+ - new option which implements adaptive kernel density estimation; 
+ - new function hprop2f to automatically select the matrix of badwidths
+ according to Silverman's(1986) approach;
+ - new arguments "bwtype", "hx", "alpha" in function kepdf;
+ - new kernel function "t7" to save time in computation for very 
+ large datasets;
+ - new arghument "kernel" in function "kepdf";
+ - removed argument "h.weigths" in function "kepdf";
+ - new slots "kernel", "bwtype" and "par" in objects of class "kepdf";
+ - removed slots "h" and "h.weigths" in objects of class "kepdf";
+ - new argument "indcol" in function "plot.kepdfdd";
+ - new procedure to find connected components; to  be used instead
+ of the Delaunay triangulation for high-dimensional data;
+ - new arguments in function "pdfCluster": "graphtype", "Q", "lambda",
+ "grid.pairs";
+ - arguments in function pdfCluster left as optional only: "h", "n.stage"; 
+ - new slots in objects of class pdfCluster: "pdf", "graph";
+ - new arguments "cores" and "se" in function "pdfClassification";
+ - new "pdfCluster" methods for objects of class "numeric", "matrix",
+ "data.frame", "pdfCluster";
+ - removed argument "h.funct" in pdfClassification;
+ - classes "pdf.Silhouette" and "pdf.Silhouette.summary" renamed as "dbs" and
+ "dbs.summary" respectively;
+ - renamed slot "nc" to "noc" in dbs-class objects
+ 

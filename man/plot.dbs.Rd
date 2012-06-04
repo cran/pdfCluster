@@ -1,23 +1,24 @@
-\name{plot.pdfSilhouette}
-\alias{plot.pdfSilhouette}
-\alias{plot,pdfSilhouette,missing-method}
+\name{plot,dbs-method}
+\docType{methods}
+\alias{plot,dbs-method}
+\alias{plot.dbs}
+\alias{plot,dbs,missing-method}
 
 \title{
-Plot objects of class pdfSilhouette 
+Plot objects of class dbs 
 }
 \description{
 This function provides a graphical tool to display diagnostics 
-of density-based cluster analysis by means of the density-Silhouette information.
+of density-based cluster analysis by means of the density-based silhouette information.
 }
 \usage{
-plot.pdfSilhouette(x, y , xlab = "", ylab = "", col = NULL,
-	lwd = 3, cex = 0.9, cex.axis = 0.5, main = NULL, 
-	labels = FALSE, ...)
+\S4method{plot}{dbs}(x, y , xlab = "", ylab = "", col = NULL, lwd = 3, cex = 0.9, 
+    cex.axis = 0.5, main = NULL, labels = FALSE, ...)
 }
 
 \arguments{
   \item{x}{
-An object of \code{\link{pdfSilhouette-class};}
+An object of \code{\link{dbs-class};}
 }
   \item{y}{
 Not used; for compatibility with generic plot;
@@ -34,14 +35,14 @@ A numerical value giving the amount by which plotting text and symbols should be
   \item{cex.axis}{
 The magnification to be used for axis annotation relative to the current setting of cex;}
   \item{main}{
-An overall title for the plot}
+An overall title for the plot; }
   \item{labels}{
 Logical. Should row index of data be added to the plot? }
   \item{\dots}{
 Further arguments to be passed to \code{plot};}
 }
 \details{
-After computing the density-based Silhouette index by applying \code{\link{dbs-methods}}, data are partitioned 
+After computing the density-based silhouette index by applying \code{\link{dbs-methods}}, data are partitioned 
 into the clusters, sorted in a decreasing order with respect to their dbs value and displayed
 on a bar graph.}
 %%\value{
@@ -54,13 +55,13 @@ on a bar graph.}
 
 \section{Methods}{
 \describe{
-\item{\code{signature(x = "pdfSilhouette", y = "missing")}}{
+\item{\code{signature(x = "dbs", y = "missing")}}{
 
-S4 method for plotting objects of \code{\link{pdfSilhouette-class}}}
+S4 method for plotting objects of \code{\link{dbs-class}}}
 }
 }
 \references{
-Menardi, G. (2010) Density-based Silhouette diagnostics for clustering methods. \emph{Statistics and Computing}, DOI: 10.1007/s11222-010-9169-0.}
+Menardi, G. (2010) Density-based Silhouette diagnostics for clustering methods. \emph{Statistics and Computing}, 21, 295-308.}
 
 %%\author{
 %%  ~~who you are~~
@@ -72,7 +73,7 @@ Menardi, G. (2010) Density-based Silhouette diagnostics for clustering methods. 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link{dbs}}, \code{\link{summary.pdfSilhouette}}, \code{\link{summary.pdfSilhouette-class}}, \code{\link[cluster:silhouette]{silhouette}}
+\code{\link{dbs}}, \code{\link{dbs-class}}, \code{\link[cluster:silhouette]{silhouette}}.
 }
 \examples{
 #example 1: no groups in data
