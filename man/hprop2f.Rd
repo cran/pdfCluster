@@ -28,7 +28,7 @@ Kernel to be used to compute the pilot density estimate. It should be one of
 
 }
 \details{
-A vector of smoothing parameters \eqn{h_{i}} is estimated for each sample point \eqn{x_i}, as follows:
+A vector of smoothing parameters \eqn{h_{i}} is chosen for each sample point \eqn{x_i}, as follows:
 \deqn{h_i = h \left(\frac{\hat{f}_h(x_i)}{g}\right)^{- \alpha }}
 
 where \eqn{\hat{f}_h} is a pilot kernel density estimate of the density function \eqn{f}, with vector of bandwidths \code{h},
@@ -42,7 +42,7 @@ the vector of smoothing parameters for sample point \eqn{x_i}.
 }
 
 \references{
-Silverman, B. (1986). \emph{Density estimation for statistics and data analysis}. Chapman and Hall, New York.
+Silverman, B. (1986). \emph{Density estimation for statistics and data analysis}. Chapman and Hall, London.
 } 
 
 \seealso{

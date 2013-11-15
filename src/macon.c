@@ -198,6 +198,7 @@ void apply_valley_measure(double *area, double *F, int *npoints, int *nrow_matr)
 
 		valley_measure(&res, F_tmp, npoints);
 		area[i]=res;
+		R_CheckUserInterrupt();		
 		res=0.0;
 	}
 

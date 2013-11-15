@@ -19,14 +19,13 @@ the vector containining the class labels of the second partition.  }
 }
 \details{
 The adjusted Rand index is a correction of the Rand index that measures the similarity between two classifications of
-the same objects by the proportions of agreements between the two partitions. The correction is done by subtracting from the Rand index its 
-expected value. 
+the same objects by the proportions of agreements between the two partitions. The correction is obtained by subtracting from the Rand index its expected value. 
 }
 \value{
-A vector of length 1.    
+A numeric vector of length 1.    
 }
 \references{
-L. Hubert and P. Arabie (1985) Comparing Partitions, \emph{Journal of the Classification}, 2, 193-218. } 
+L. Hubert and P. Arabie (1985) Comparing partitions, \emph{Journal of Classification}, 2, 193-218. } 
 
 \seealso{
 \code{\link[base:table]{table}}}
@@ -44,7 +43,7 @@ x <- wine[, c(2, 5, 8)]
 cl <- pdfCluster(x)
 
 #comparison with original groups
-table(cl@clusters, gr)
-adj.rand.index(cl@clusters, gr)
+table(groups(cl), gr)
+adj.rand.index(groups(cl), gr)
 }
 \keyword{cluster}

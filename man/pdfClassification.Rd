@@ -38,12 +38,12 @@ message and the outlier remains unclassified. The cluster label of \eqn{x_0} wil
  
 The current implementation of this idea proceeds in \code{n.stage} stages, allocating a block of points at a time,
 updating the estimates \eqn{\hat{f}_m(\cdot)} based on the new members of each group and then allocating a new block of points. 
-When \code{se =  TRUE}, classification is performed by further weighting the log-ratios inversely with their approximated standard
-error, so that points whose density estimate has highest precision are allocate first.
+When \code{se = TRUE}, classification is performed by further weighting the log-ratios inversely with their approximated standard
+error, so that points whose density estimate has highest precision are allocated first.
 
 Each of the \eqn{\hat{f}_m(\cdot)} is built by selecting either the same bandwidths \eqn{h_0} as the ones used to form the cluster cores (when \code{hcores = TRUE}) or cluster-specific bandwidths, obtained as follows: 
 \deqn{h_m^{*} = \exp [(1-a_m) \log(h_0) + a_m \log(h_m)],}
-where \eqn{a_m} is the proportion of data points in the \eqn{m}-th cluster core and \eqn{h_m} are asimptotically optimal for a normal distribution of the \eqn{m}-th cluster or computed according to the Silverman (1986) approach, if the kernel estimator has fixed or adaptive bandwidth, respectively. 
+where \eqn{a_m} is the proportion of data points in the \eqn{m}-th cluster core and \eqn{h_m} are asymptotically optimal for a normal distribution of the \eqn{m}-th cluster or computed according to the Silverman (1986) approach, if the kernel estimator has fixed or adaptive bandwidth, respectively. 
  }
 \value{
 An object of \code{\link{pdfCluster-class}} with slot \code{stages} of class \code{"list"} having length equal to \code{n.stage}. 
@@ -51,6 +51,8 @@ See \code{\link{pdfCluster-class}} for further details.
 }
 \references{
 Azzalini A., Torelli N. (2007). Clustering via nonparametric density estimation. \emph{Statistics and Computing}. 17, 71-80.
+
+Silverman, B. (1986). \emph{Density estimation for statistics and data analysis}. Chapman and Hall, London.
 }
 %%\author{
 %%  ~~who you are~~
@@ -61,8 +63,8 @@ Function \code{\link{pdfClassification}} is called internally, from \code{\link{
 argument an object of \code{\link{pdfCluster-class}}.
 
 When \code{\link{pdfClassification}} is internally called from \code{\link{pdfCluster}} and one group only is detected, 
-the slot \code{stages} is a list with \code{n.stage} elements, each of them being a vector with length set to the number
-of data and set all to 1.
+the slot \code{stages} is a list with \code{n.stage} elements, each of them being a vector with length equal to the number
+of data points and all elements equal to 1.
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
@@ -81,11 +83,11 @@ x <- wine[, c(2,5,8)]
 #whole procedure, included the classification phase
 cl <- pdfCluster(x)
 summary(cl)
-table(cl@clusters)
+table(groups(cl))
 
 #use of bandwidths specific for the group 
 cl1 <- pdfClassification(cl, hcores= TRUE)
-table(cl1@clusters)
+table(groups(cl1))
 }
 
 % Add one or more standard keywords, see file 'KEYWORDS' in the

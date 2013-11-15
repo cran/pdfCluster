@@ -1,9 +1,13 @@
 # .noGenerics <- TRUE
 # .conflicts.OK <- TRUE
 
-.onLoad <- .First.lib <- function(lib, pkg)
+.onLoad <- function(lib, pkg)
 {
     library.dynam("pdfCluster", pkg, lib)
+   }
+
+.onAttach <- function(lib, pkg)
+{
     ver <- read.dcf(file.path(lib, pkg, "DESCRIPTION"), "Version")
     packageStartupMessage(paste(pkg, ver))
     packageStartupMessage( 
@@ -13,5 +17,3 @@
        "see \"help(\"pdfCluster-package\")\" for the setting which", "\n",
        "reproduce the functioning of the previous versions.", " \n","\n")
 }
-
-

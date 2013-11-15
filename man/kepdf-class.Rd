@@ -3,6 +3,7 @@
 \docType{class}
 \alias{kepdf-class}
 \alias{show,kepdf-method}
+\alias{summary.kepdf}
 
 \title{Class "kepdf"}
 \description{

@@ -2,12 +2,13 @@
 \Rdversion{1.1}
 \docType{class}
 \alias{dbs-class}
+\alias{summary.dbs}
 %\alias{plot,dbs,missing-method}
 \alias{show,dbs-method}
 
 \title{Class "dbs"}
 \description{
-This class encapsulates results of the application of function 
+This class pertains to results of the application of function 
 {\code{\link{dbs}}}.
 }
 
@@ -62,9 +63,9 @@ elements are shown:
 		}	}
 	 }	 
 }
-\references{
-Menardi, G. (2010) Density-based Silhouette diagnostics for clustering methods.
- \emph{Statistics and Computing}, 21:295-308.}
+%\references{
+%Menardi, G. (2011) Density-based Silhouette diagnostics for clustering methods.
+% \emph{Statistics and Computing}, 21:295-308.}
 
 
 \seealso{

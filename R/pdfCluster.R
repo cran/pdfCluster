@@ -18,7 +18,7 @@ kepdf <- function (x, eval.points = x, kernel = "gaussian", bwtype = "fixed", h 
     eval.points <- data.matrix(eval.points)
     nx <- as.integer(nrow(x))
     ndim <- as.integer(ncol(x))
-    x <- matrix(as.double(x), nx, ndim)
+    #x <- matrix(as.double(x), nx, ndim)
     neval <- as.integer(nrow(eval.points))
     eval.points <- matrix(as.double(eval.points), neval, ndim)
     f <- as.double(rep(0, neval))
@@ -35,14 +35,14 @@ kepdf <- function (x, eval.points = x, kernel = "gaussian", bwtype = "fixed", h 
     rec.hm <- 1/(hm)
     prodhm <-apply(rec.hm, 1, prod) 
     pdf <- switch(kernel,  
-        gaussian = .C("c_kepdfopt", as.double(x), as.double(rec.hm/sqrt(2)), as.double(eval.points), 
+        gaussian = .C("c_kepdfN", as.double(x), as.double(rec.hm/sqrt(2)), as.double(eval.points), 
               as.integer(nx), as.integer(ndim), as.integer(neval), 
               double(neval), as.double(prodhm), DUP=FALSE, PACKAGE="pdfCluster"),
         t7 = .C("c_kepdft7", as.double(x), as.double(rec.hm), as.double(eval.points), 
               as.integer(nx), as.integer(ndim), as.integer(neval), 
               double(neval), as.double(prodhm), DUP=FALSE, PACKAGE="pdfCluster")
 	)
-        new("kepdf", call = match.call(), x = x, eval.points = eval.points, estimate = pdf[[7]], kernel= kernel, bwtype = bwtype, par = par)
+	new("kepdf", call = match.call(), x = x, eval.points = eval.points, estimate = pdf[[7]], kernel= kernel, bwtype = bwtype, par = par)
 	}	
 
 		
@@ -70,7 +70,7 @@ h.norm <- function(x){
     rec.hm <- 1/(hm)
     prodhm <-apply(rec.hm, 1, prod) 
     pdfpil <- switch(kernel,  
-        gaussian = .C("c_kepdfopt", as.double(x), as.double(rec.hm/sqrt(2)), as.double(x), 
+        gaussian = .C("c_kepdfN", as.double(x), as.double(rec.hm/sqrt(2)), as.double(x), 
               as.integer(nx), as.integer(ndim), as.integer(nx), 
               double(nx), as.double(prodhm), DUP=FALSE, PACKAGE="pdfCluster"),
         t7= .C("c_kepdft7", as.double(x), as.double(rec.hm), as.double(x), 
@@ -103,6 +103,7 @@ summary.kepdf <- function (object, ..., props=c(75,50,25)) {
 	#names(indices) <- paste(as.character(props),"%",sep="")
 	#new("summary.kepdf", obj.class=class(object)[1], mode = modepos, props = props, indices = indices)
     #show 
+    invisible(object)
     }
 
 #setClass("summary.kepdf", representation(obj.class = "character", mode = "numeric", props = "numeric", indices = "list"))
@@ -124,8 +125,8 @@ setMethod("show","kepdf", function(object){
 		cat("Estimator type: fixed bandwidth", "\n")
 		cat("\n")
 		if(ncol(object@x)==1) 
-		cat("Smothing parameter: ", object@par$h, "\n") else 
-		cat("Diagonal elements of the smothing matrix: ", object@par$h, "\n")
+		cat("Smoothing parameter: ", object@par$h, "\n") else 
+		cat("Diagonal elements of the smoothing matrix: ", object@par$h, "\n")
 		} else {
 		cat("Estimator type: adaptive bandwidth", "\n")
 		cat("\n")
@@ -317,9 +318,12 @@ setClass("pdfCluster", representation(call="call", x="matrix", pdf="list",
 
 #library(geometry)
 
-pdfCluster.data <- function (x, graphtype, Q="QJ", lambda = 0.10, grid.pairs = 10, n.grid=min(50, nrow(as.matrix(x))), ... ) 
+pdfCluster.data <- function (x, graphtype, hmult, Q="QJ", lambda = 0.10, grid.pairs = 10, n.grid=min(round((5 + sqrt(NROW(x)))*4), NROW(x)), ... ) 
 {
+ call<-match.call()
+ x<-data.matrix(x)
  if(any(sapply(x[1,],is.factor))) stop("All variables must be numeric")
+ if(any(apply(x,2,check.discrete)<10)) warning("One or more variables look to be discrete: pdfCluster is designed for continuous data")
  if(any(is.na(x))) {warning(cat("NA in object",deparse(substitute(x)), "have been omitted", "\n"));  x<- na.omit(x)}
   #manage dots
 	dots <- list(...)
@@ -328,9 +332,9 @@ pdfCluster.data <- function (x, graphtype, Q="QJ", lambda = 0.10, grid.pairs = 1
         dots.kepdf <- dots[args.kepdf]
         args.pdfClassification <- ndots%in%(names(formals(pdfClassification)))
         dots.pdfClassification <- dots[args.pdfClassification]
-	x <- data.matrix(x)  
-	if (!"hmult"%in% ndots) if (ncol(x)>6) dots$hmult=1 else dots$hmult=0.75          
-	if ("h" %in% names(dots.kepdf)) dots.kepdf$h <-dots.kepdf$h*dots$hmult else dots.kepdf$h <- dots$hmult*h.norm(x)	
+	#x <- data.matrix(x)  
+	if (missing(hmult)) if (ncol(x)>6) hmult=1 else hmult=0.75          
+	if ("h" %in% names(dots.kepdf)) dots.kepdf$h <-dots.kepdf$h*hmult else dots.kepdf$h <- hmult*h.norm(x)	
 	pdf <- do.call(kepdf, c(list(x = x, eval.points = x), dots.kepdf))
 	estimate <- pdf@estimate
         #check given arguments 
@@ -356,6 +360,7 @@ pdfCluster.data <- function (x, graphtype, Q="QJ", lambda = 0.10, grid.pairs = 1
 	if (graphtype == "delaunay") {
 		if(haslambda) message("Unused argument 'lambda' when graphtype= 'delaunay'")
 		if(hasgrid.pairs) message("Unused argument 'grid.pairs' when graphtype= 'delaunay'")
+      if(NCOL(x)> 6) warning("Running pdfCluster with graphtype='delaunay' may require a long time when the number of variables is so large")		
 		graph.nb <- graph.del(x, Q = Q) 
 		} else
 	if (graphtype == "pairs") {
@@ -364,13 +369,13 @@ pdfCluster.data <- function (x, graphtype, Q="QJ", lambda = 0.10, grid.pairs = 1
 		graph.par$lambda = lambda; graph.par$comp.area <- graph.nb$comp.areas
 		} else 
 	stop("graphtype should be one of 'unidimensional', 'delaunay', or 'pairs'")
-	nc <- num.con(x, estimate, graph.nb$graph, profile.grid = n.grid-1, correct=TRUE)  
+	nc <- num.con(x, estimate, graph.nb$graph, profile.grid = n.grid-2, correct=TRUE)  
   	    #qui connessi
         struct <- con2tree(nc, estimate)
     if (struct$bad) {
         message("No output given")
-        message("The grid is too coarse: re-run with larger value of 'n.grid' or with larger bandwidth")
-    }
+		      if (graphtype == "pairs") message ("The grid is too coarse: re-run with a larger value of one among 'n.grid', 'hmult' or 'lambda'. See the 'Warning' Section in 'help(pdfCluster)' for further details.") else message("The grid is too coarse: re-run with larger value of 'n.grid' or hmult. See the 'Warning' Section in 'help(pdfCluster)' for further details.")
+      }
 	    else {
     	g <- struct$g
         g[struct$g == 0] <- NA
@@ -379,7 +384,7 @@ pdfCluster.data <- function (x, graphtype, Q="QJ", lambda = 0.10, grid.pairs = 1
 		pdf.comp$bwtype <- pdf@bwtype
 		pdf.comp$par <- pdf@par
 		pdf.comp$estimate <- estimate
-		out <- new("pdfCluster", call = match.call(), x = data.matrix(x), 
+		out <- new("pdfCluster", call = call, x = data.matrix(x), 
             pdf = pdf.comp,  nc = nc, graph = graph.par, cluster.cores = g, tree = struct$tree, noc = struct$noc, 
             stages = NULL, clusters = NULL)
         if ((!"n.stage" %in% ndots)||("n.stage" %in% ndots && dots.pdfClassification$n.stage > 0)) {
@@ -392,7 +397,7 @@ pdfCluster.data <- function (x, graphtype, Q="QJ", lambda = 0.10, grid.pairs = 1
 # function to find clusters starting from a graph of data
 
 #pdfCluster.graphpairs <- function (x, lambda = 0.10, n.grid=min(50, nrow(as.matrix(x@x))), ... ) 
-pdfCluster.graphpairs <- function (x, graphtype, Q, lambda, grid.pairs, n.grid = min(50, nrow(as.matrix(x@x))), ...)
+pdfCluster.graphpairs <- function (x, graphtype, hmult, Q, lambda=0.10, grid.pairs, n.grid=min(round((5 + sqrt(NROW(x@x)))*4), NROW(x@x)), ...)
 {
     #manage dots
 	dots <- list(...)
@@ -412,12 +417,12 @@ pdfCluster.graphpairs <- function (x, graphtype, Q, lambda, grid.pairs, n.grid =
 	graph.par$type <- graph.nb$type
 	graph.par$comp.area <- graph.nb$comp.areas
 	graph.par$lambda=lambda
-	nc <- num.con(x@x, x@pdf$estimate, graph.nb$graph, profile.grid = n.grid-1, correct=TRUE)  
+	nc <- num.con(x@x, x@pdf$estimate, graph.nb$graph, profile.grid = n.grid-2, correct=TRUE)  
   	    #qui connessi
         struct <- con2tree(nc,x@pdf$estimate)
     if (struct$bad) {
         message("No output given")
-        message("The grid is too coarse: re-run with larger value of 'n.grid' or with larger value of 'hmult'")
+		message ("The grid is too coarse: re-run with a larger value of one among 'n.grid', 'hmult' or 'lambda'. See the 'Warning' Section in 'help(pdfCluster)' for further details.")
     }
 	    else {
     	g <- struct$g
@@ -439,22 +444,34 @@ pdfCluster.graphpairs <- function (x, graphtype, Q, lambda, grid.pairs, n.grid =
 #setMethod("pdfCluster", signature(x="numeric", graphtype = "ANY", Q = "ANY"), pdfCluster.data)
 #setMethod("pdfCluster", signature(x="pdfCluster", graphtype = "missing", Q = "missing"), pdfCluster.graphpairs)
 
-setGeneric("pdfCluster",function(x, graphtype, Q="QJ", lambda = 0.10, grid.pairs = 10, n.grid=min(50, nrow(as.matrix(x))), ... ) standardGeneric("pdfCluster"))
-setMethod("pdfCluster", signature(x="matrix", graphtype="ANY", Q="ANY", lambda = "ANY", grid.pairs = "ANY", n.grid="ANY"), pdfCluster.data)
-setMethod("pdfCluster", signature(x="data.frame", graphtype="ANY", Q="ANY", lambda = "ANY", grid.pairs = "ANY", n.grid="ANY"), pdfCluster.data)
-setMethod("pdfCluster", signature(x="numeric", graphtype="ANY", Q="ANY", lambda = "ANY", grid.pairs = "ANY", n.grid="ANY"), pdfCluster.data)
-setMethod("pdfCluster", signature(x="pdfCluster", graphtype="missing", Q="missing",lambda="ANY", grid.pairs="missing", n.grid="ANY"), pdfCluster.graphpairs)
+##versione 1:0-0
+#setGeneric("pdfCluster", function(x, graphtype, hmult, Q="QJ", lambda = 0.10, grid.pairs = 10, n.grid = min(round((6 + sqrt(NROW(x)))*4), NROW(x)),...) standardGeneric("pdfCluster"))
+#setMethod("pdfCluster", signature(x="matrix", graphtype="ANY", hmult= "ANY", Q="ANY", lambda = "ANY", grid.pairs = "ANY", n.grid="ANY"), pdfCluster.data)
+#setMethod("pdfCluster", signature(x="data.frame", graphtype="ANY", hmult= "ANY", Q="ANY", lambda = "ANY", grid.pairs = "ANY", n.grid="ANY"), pdfCluster.data)
+#setMethod("pdfCluster", signature(x="numeric", graphtype="ANY", hmult= "ANY", Q="ANY", lambda = "ANY", grid.pairs = "ANY", n.grid="ANY"), pdfCluster.data)
+#setMethod("pdfCluster", signature(x="pdfCluster", graphtype="missing", hmult= "ANY", Q="missing",lambda="ANY", grid.pairs="missing", n.grid="ANY"), pdfCluster.graphpairs)
 
+##versione 1:0-1
+#setGeneric("pdfCluster",function(x, graphtype, hmult, Q="QJ", lambda = 0.10, grid.pairs = 10, n.grid=min(round((6 + sqrt(NROW(x)))*4), NROW(x)),...) standardGeneric("pdfCluster"))
+#setMethod("pdfCluster", signature(x="matrix", graphtype="character", hmult="numeric", Q="character", lambda = "numeric", grid.pairs = "numeric", n.grid="numeric"), pdfCluster.data)
+#setMethod("pdfCluster", signature(x="data.frame", graphtype="character", hmult="numeric", Q="character", lambda = "numeric", grid.pairs = "numeric", n.grid="numeric"), pdfCluster.data)
+#setMethod("pdfCluster", signature(x="numeric", graphtype="character", hmult="numeric", Q="character", lambda = "numeric", grid.pairs = "numeric", n.grid="numeric"), pdfCluster.data)
+#setMethod("pdfCluster", signature(x="pdfCluster", graphtype="missing", hmult="missing", Q="missing",lambda="numeric", grid.pairs="missing", n.grid="numeric"), pdfCluster.graphpairs)
 
-
+#versione 1:0-1
+setGeneric("pdfCluster", function(x, graphtype, hmult, Q="QJ", lambda = 0.10, grid.pairs = 10, n.grid = min(round((5 + sqrt(NROW(x)))*4), NROW(x)),...) standardGeneric("pdfCluster"))
+setMethod("pdfCluster", signature(x="matrix"), pdfCluster.data)
+setMethod("pdfCluster", signature(x="data.frame"), pdfCluster.data)
+setMethod("pdfCluster", signature(x="numeric"), pdfCluster.data)
+setMethod("pdfCluster", signature(x="pdfCluster"), pdfCluster.graphpairs)
 
 #setClass("summary.pdfCluster", representation(obj.class="character", cluster.cores="numeric", clusters="ANY", tree="dendrogram"))
 
 #summary.pdfCluster <- function(object, ...){
 summary.pdfCluster <- function(object,...){
     noc <-object@noc
-    t.cluster.cores<-table(object@cluster.cores,exclude=NULL)
-    t.clusters<-table(object@clusters)
+    t.cluster.cores<-table(groups(object, stage=0),exclude=NULL)
+    t.clusters<-table(groups(object))
     maxdigcc<-nchar(max(t.cluster.cores))	
     maxdigc<-nchar(max(t.clusters))	
     cat("An S4 object of class \"", class(object), "\"","\n","\n",sep="")
@@ -467,7 +484,7 @@ summary.pdfCluster <- function(object,...){
 	cat("Final groupings:","\n");
     cat(" label ", format(1:noc, width=maxdigc),"\n","count ", format(t.clusters, width=maxdigc),"\n")
 	cat("\n")
-	cat("Groups tree:\n")
+	cat("Groups tree (here 'h' denotes 'height'):\n")
 	str(object@tree)
 	invisible(object)
 }
@@ -482,9 +499,9 @@ setMethod("show",signature("pdfCluster"), function(object){
     cat("\n")
 	#h  <-  object@hmult*object@h
 	#if(ncol(object@x)==1) 
-	#cat("Smothing parameter: ", h, "\n", "\n")
+	#cat("Smoothing parameter: ", h, "\n", "\n")
 	#else 
-	#cat("Diagonal elements of the smothing matrix: ", h, "\n","\n")
+	#cat("Diagonal elements of the smoothing matrix: ", h, "\n","\n")
 	#cat("Density estimate at data points: ", "\n")
 	#print(object@estimate)
 	#cat("\n")
@@ -494,24 +511,28 @@ setMethod("show",signature("pdfCluster"), function(object){
 	cat("Graph type:\n")
 	    print(object@graph$type)
 		cat("\n")
-	cat("Groups tree:\n")
+	cat("Groups tree (here 'h' denotes 'height'):\n")
 	str(object@tree)
 	cat("\n")
   	cat("Initial groupings:", "\n")
-      print(object@cluster.cores)
+      print(groups(object, stage=0))
     cat("\n")
-	if(!is.null(object@clusters)){
+	if(!is.null(groups(object))){
     if (length(object@stages)>1) for(i in seq(1:(length(object@stages)-1))){
 	cat("Stage", i, "groupings:","\n")
     print(object@stages[[i]])
     cat("\n")}
 	cat("Final groupings:", "\n")
-      print(object@clusters)
+      print(groups(object))
     cat("\n")
 		}
    })
 
-
+groups <- function(obj, stage=length(obj@stages)) {
+ if(class(obj)!="pdfCluster") stop("Function 'groups' extracts groups from objects of class 'pdfCluster'")
+ if (stage==0) out <- obj@cluster.cores else {if (is.null(obj@stages)) out <- NULL else out <- obj@stages[[stage]]}
+ out
+	}
 
 pdfClassification <- function (obj, n.stage = 5, se=TRUE, hcores=FALSE) 
 {
@@ -1093,6 +1114,7 @@ summary.dbs <- function(object, ...){
 		}
 	cat("Density based silhouette summary of data", "\n")
 	print(summary(object@dbs))
+	invisible(object)
 	}
 
 setMethod("summary", "dbs", summary.dbs)
@@ -1132,6 +1154,7 @@ adj.rand.index <- function (cl1, cl2){
 }
 
 
+check.discrete <-function (vec) length(unique(vec))
 
 
 

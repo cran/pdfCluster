@@ -39,7 +39,7 @@ An overall title for the plot; }
   \item{labels}{
 Logical. Should row index of data be added to the plot? }
   \item{\dots}{
-Further arguments to be passed to \code{plot};}
+Further arguments to be passed to \code{plot}.}
 }
 \details{
 After computing the density-based silhouette index by applying \code{\link{dbs-methods}}, data are partitioned 
@@ -60,8 +60,9 @@ on a bar graph.}
 S4 method for plotting objects of \code{\link{dbs-class}}}
 }
 }
-\references{
-Menardi, G. (2010) Density-based Silhouette diagnostics for clustering methods. \emph{Statistics and Computing}, 21, 295-308.}
+%\references{
+%Menardi, G. (2010) Density-based Silhouette diagnostics for clustering methods. \emph{Statistics and Computing}, 21, 
+%295-308.}
 
 %%\author{
 %%  ~~who you are~~

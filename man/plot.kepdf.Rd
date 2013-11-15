@@ -38,22 +38,22 @@ A vector with length set to the number of column of sample data, defining the
 length of the grid on which the density to be plotted is evaluated; this
 argument is ignored when eval.points is not \code{NULL}.
   }
-\item{data}{Data to be add to the plot.}
+\item{data}{Data to be optionally superimposed to the density plot.}
 \item{add}{Logical. If \code{TRUE}, add to a current plot.}
-\item{main}{An overall title for the plot}
-\item{xlab}{A title for the x axis}
-\item{ylab}{A title for the y axis}
-\item{zlab}{A title for the z axis}
-\item{col}{A specification for the plotting color}
+\item{main}{An overall title for the plot.}
+\item{xlab}{A title for the x axis.}
+\item{ylab}{A title for the y axis.}
+\item{zlab}{A title for the z axis.}
+\item{col}{A specification for the plotting color.}
 \item{col.data}{A specification for the color of \code{data}. Ignored if \code{data} is \code{NULL}.}
-\item{type}{What type of plot should be drawn. This argument applies when kernel density estimate is performed on unidimensional data only. Default value is "l".}
+\item{type}{What type of plot should be drawn. This argument applies when kernel density estimate is performed on unidimensional data only. Default value is \code{"l"}.}
 \item{props}{A vector defining the fraction of the data to be included within each density level. This argument applies when kernel density estimate is performed on
 multidimensional data only.}
 \item{method}{One of \code{c("contour", "image", "perspective")}. To be used when two or higher dimensional data 
 have been used to estimate the density.}
 \item{ticktype}{Character: "simple" draws just an arrow parallel to the axis to indicate direction of increase;
  "detailed" draws normal ticks; to be used if \code{method="perspective"} only.}
-\item{indcol}{vector of the column positions to be plot, when densities are estimated on higher than 2-dimensional data.} 
+\item{indcol}{Vector of the column positions to be plotted, when densities are estimated on higher than 2-dimensional data.} 
 \item{text.diag.panel}{Text to be displayed on the diagonal panels when plotting densities estimated on higher than 2-dimensional data.}
 \item{gap}{Distance between subplots, when plotting densities estimated of 2-dimensional data or higher-dimensional data.}
   \item{\dots}{
@@ -61,11 +61,11 @@ Further arguments to be passed to \code{plot}, \code{image}, \code{contour}, \co
 }
 }
 \details{
-When density estimates is based on two or higher dimensional data, these functions make use of functions \code{\link[graphics:contour]{contour}},
+When density estimation is based on two or higher dimensional data, these functions make use of functions \code{\link[graphics:contour]{contour}},
 \code{\link[graphics:image]{image}} and \code{\link[graphics:persp]{persp}}. 
 % from package \code{\link[graphics:graphics-package]{graphics-package}}.
 For densities estimated on higher than 2-d data, the pairwise marginal estimated densities are plotted for all
-the possible pairs of coordinates or a selection of them.
+possible pairs of coordinates or a chosen selection of them.
 }
 \value{
 A list containing the following elements:

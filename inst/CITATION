@@ -1,20 +1,18 @@
-citHeader("To cite the sn package in publications use:")
+citHeader("To cite the pdfCluster package in publications use:")
 
 if(!exists("meta") || is.null(meta)) meta <- packageDescription("pdfCluster")
 
 citEntry(entry="manual",
 	title = paste("{R} package \\texttt{pdfCluster}: ",
-	" Cluster analysis via nonparametric density estimation (version ", meta$Version, ")", sep=""),
-	author = personList(as.person("A. Azzalini"),
-	                     as.person("G. Menardi"),
-			         as.person("T. Rosolin")),
-address = "Universit\\`a di Padova, Italia",
-year = substr(meta$Date, 1, 4),
-url = "http://cran.r-project.org/web/packages/pdfCluster/index.html",
-textVersion = 
-paste("Azzalini, A., Menardi, G., Rosolin, T. (", substr(meta$Date, 1, 4), "). ",
-"R package 'pdfCluster': Cluster analysis via nonparametric density estimation", " (version ", meta$Version, "). ",
-"URL http://cran.r-project.org/web/packages/pdfCluster/index.html",
+	" Cluster analysis via nonparametric density estimation (Version ", meta$Version, ")", sep=""),
+	author = personList(as.person("A. Azzalini"), as.person("G. Menardi")),
+   note = "with contribution of T. Rosolin up to version 0.0-13",
+   year = substr(meta$Date, 1, 4),
+   url = "http://cran.r-project.org/web/packages/pdfCluster/index.html",
+   textVersion = 
+paste("Azzalini, A. and Menardi, G. (", substr(meta$Date, 1, 4), "). ",
+"R package 'pdfCluster': Cluster analysis via nonparametric density estimation", " (Version ", meta$Version, "). ",
+"With contribution of T. Rosolin up to version 0.0-13. ", "URL http://cran.r-project.org/web/packages/pdfCluster/index.html",
 sep="")
 )
 

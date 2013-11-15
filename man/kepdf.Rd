@@ -5,7 +5,7 @@
 Kernel estimate of a probability density function. 
 }
 \description{
-Estimates density of 1-d, 2-d, 3-d, and higher dimensional data by kernel methods. 
+Estimates density of uni- and multivariate data by the kernel method. 
 }
 \usage{
 kepdf(x, eval.points = x, kernel = "gaussian", 
@@ -36,7 +36,7 @@ specific for each sample point. To be used when \code{bwtype = "adaptive"}. Defa
 applied to \code{x}. Set to NULL when \code{bwtype= "fixed"}. 
   }
   \item{alpha}{
-Sensitivity parameter to be given to \code{\link{hprop2f}} when \code{bwtype= "adaptive"} and the vectors of smoothing parameters are computed according to the Silverman's (1986) approach.
+Sensitivity parameter to be given to \code{\link{hprop2f}} when \code{bwtype= "adaptive"} and the vectors of smoothing parameters are computed according to Silverman's (1986) approach.
 %when satysfying \eqn{0 \leq \alpha \leq 1}, that van be given   
 %giving the power to which raise the pilot 
 %density  . See details.
@@ -47,11 +47,11 @@ Sensitivity parameter to be given to \code{\link{hprop2f}} when \code{bwtype= "a
 The current version of \code{\link{pdfCluster-package}} allows for computing estimates by a kernel product 
 estimator of the form: 
 
-\deqn{\hat{f}(y)= \sum_{i=1}^n \frac{1}{n h_{i,j} \cdots h_{i,d}} \prod_{j=1}^d K\left(\frac{y_{j} - x_{i,j}}{h_{i,j}}\right).
+\deqn{\hat{f}(y)= \sum_{i=1}^n \frac{1}{n h_{i,1} \cdots h_{i,d}} \prod_{j=1}^d K\left(\frac{y_{j} - x_{i,j}}{h_{i,j}}\right).
 }
 
 The kernel function \eqn{K} can either be a Gaussian density (if \code{kernel = "gaussian"}) or a \eqn{t_\nu} density, with \eqn{\nu = 7} degrees of freedom (when \code{kernel = "t7"}).
-Although uncommon, the opportunity of selecting a \eqn{t} kernel is motivated by computational efficiency reasons. Hence, its use is suggested when either \code{x} or \code{eval.points} have a huge number of rows.
+Although uncommon, the option of selecting a \eqn{t} kernel is motivated by computational efficiency reasons. Hence, its use is suggested when either \code{x} or \code{eval.points} have a huge number of rows.
  
 The vectors of bandwidths \eqn{h_{i} = (h_{i,1} \cdots h_{i,d})'} are defined as follows: 
 \describe{
@@ -89,9 +89,9 @@ An S4 object of \code{\link{kepdf-class}} with slots:
 }
 }
 \references{
-Bowman, A.W. and Azzalini, A. (1997). \emph{Applied Smoothing Techniques for Data Analysis: Kernel Approach with S-Plus Illustrations}. Oxford University Press, Oxford.
+Bowman, A.W. and Azzalini, A. (1997). \emph{Applied smoothing techniques for data analysis: the kernel approach with S-Plus illustrations}. Oxford University Press, Oxford.
 
-Silverman, B. (1986). \emph{Density estimation for statistics and data analysis}. Chapman and Hall, New York.
+Silverman, B. (1986). \emph{Density estimation for statistics and data analysis}. Chapman and Hall, London.
 }
 
 \seealso{

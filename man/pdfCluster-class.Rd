@@ -5,10 +5,11 @@
 %\alias{dbs,pdfCluster,missing-method}
 %\alias{plot,pdfCluster,missing-method}
 \alias{show,pdfCluster-method}
+\alias{summary.pdfCluster}
 
 \title{Class "pdfCluster"}
 \description{
-This class encapsulates results of the application of function {\code{\link{pdfCluster}}}.
+This class pertains to results of the application of function {\code{\link{pdfCluster}}}.
 }
 \section{Objects from the Class}{
 Objects can be created by calls of the form \code{new("pdfCluster", ...)} or as a result to a call to \code{\link{pdfCluster}}.
@@ -30,8 +31,7 @@ Objects can be created by calls of the form \code{new("pdfCluster", ...)} or as 
 	\item{\code{stages}:}{Object of class \code{"ANY"}, being \code{NULL} if the cluster cores only are detected, \code{"list"} when also the lower density data are allocated. 
 							The elements of the list correspond to the group labels at the different stages of the classification procedure.
 							\code{NA} values correspond to unlabeled data.  }
-    \item{\code{clusters}:}{Object of class \code{"ANY"} being \code{NULL} if the cluster cores only are detected, \code{"numeric"} when
-	all the data are clustered.}
+    \item{\code{clusters}:}{Object of class \code{"ANY"} being \code{NULL} if the cluster cores only are detected, \code{"numeric"} when all the data are clustered. This slot is obsolete. Groups can be extracted by a call to function \code{\link{groups}}.}
   }
 See \code{\link{pdfCluster}} for further details.  
 }
@@ -42,7 +42,7 @@ See \code{\link{pdfCluster}} for further details.
 	Computes the density based Silhouette diagnostics of 
 	clustered data. See \code{\link{dbs}} for further details.	}
     
-	\item{pdfCluster}{\code{signature(x="pdfCluster", graphtype="missing", Q="missing", lambda="ANY", grid.pairs="missing")} 
+	\item{pdfCluster}{\code{signature(x="pdfCluster")} 
     
 	Speeds up time for re-running the \code{\link{pdfCluster}} procedure with different values of 
 	\code{tau} when \code{graphtype = "pairs"}}
@@ -87,13 +87,13 @@ See \code{\link{pdfCluster}} for further details.
 		} }	
 	 }
 }
-\references{
-Azzalini A., Torelli N. (2007). Clustering via nonparametric density estimation.
- \emph{Statistics and Computing}. vol. 17, pp. 71-80.
+%\references{
+%Azzalini A., Torelli N. (2007). Clustering via nonparametric density estimation.
+% \emph{Statistics and Computing}. vol. 17, pp. 71-80.
 
-Menardi G., Azzalini, A. (2012). An advancement in clustering via nonparametric
- density estimation. \emph{Submitted}.
-}
+%Menardi G., Azzalini, A. (2013). An advancement in clustering via nonparametric
+% density estimation. DOI: 10.1007/s11222-013-9400-x.
+%}
 
 \seealso{
 \code{\link{pdfCluster}}, \code{\link{plot,pdfCluster-method}}, 

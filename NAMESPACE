@@ -1,26 +1,21 @@
 #exportPattern("^[[:alpha:]]+")
 importFrom("graphics", plot)
-#importFrom("graphics", lines)
-
+importFrom("geometry", delaunayn)
+import("methods")
 
 export("adj.rand.index",
-	"dbs",
-    #"dbs.pdfCluster",
+    "dbs",
+    "groups",
     "h.norm",
 	"hprop2f",
 	"kepdf",
    	"pdfClassification",
-    #"pdfCluster.data",
-	#"pdfCluster.graphpairs",
 	"plot.dbs",
     "plot.kepdf",
-	#"plot.kepdf1d",
-	#"plot.kepdf2d",
-    #"plot.kepdfdd",
-	"plot.pdfCluster"      
-    #"summary.kepdf",
-    #"summary.pdfCluster",   
-    #"summary.dbs"
+	"plot.pdfCluster" ,     
+    "summary.kepdf",
+    "summary.pdfCluster",   
+    "summary.dbs"
 )
 
 exportMethods(
@@ -31,16 +26,9 @@ exportMethods(
 	"show" 
 )
 
-#S3method(plot     , kepdf)
-#S3method(plot     , pdfCluster)
-#S3method(plot     , dbs)
-
 exportClasses(
      "kepdf",
      "pdfCluster",
      "dbs"
-     #"summary.kepdf",
-     #"summary.pdfCluster",
-     #"summary.dbs"
 )
 

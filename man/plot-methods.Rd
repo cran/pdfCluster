@@ -5,7 +5,7 @@
 %\alias{plot,kepdf,ANY-method}
 %\alias{plot,pdfCluster,missing-method}
 %\alias{plot,dbs,missing-method}
-\title{Methods for Function plot}
+\title{Methods for function plot}
 \description{
 Methods for functions \code{plot} aimed at graphically displaying the S4 classes
 included in the \code{\link{pdfCluster-package}}.  

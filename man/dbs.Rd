@@ -13,7 +13,7 @@
 \title{Density-based silhouette information methods}
 
 \description{
-Computes the density-based silhouette information at clustered data. Two methods are associated to this function. The first
+Computes the density-based silhouette information of clustered data. Two methods are associated to this function. The first
 method applies to two arguments: the matrix of data and the vector of cluster labels; the second method applies to objects of 
 \code{\link{pdfCluster-class}}.
 }
@@ -31,7 +31,7 @@ method applies to two arguments: the matrix of data and the vector of cluster la
 A matrix of data points partitioned by any density-based clustering method or an object of \code{\link{pdfCluster-class}}.}
 
   \item{clusters}{
-Cluster labels of grouped data. This argument is missing when \code{x} is a \code{\link{pdfCluster-class}} object.
+Cluster labels of grouped data. This argument has not to be set when \code{x} is a \code{\link{pdfCluster-class}} object.
 }
 
   \item{h.funct}{
@@ -43,7 +43,9 @@ Shrink factor to be multiplied by the smoothing parameters. Default value is 1.
 }
 
   \item{prior}{
-Vector of prior probabilities of belonging to the groups.   
+Vector of prior probabilities of belonging to the groups. When \code{x} is of \code{\link{pdfCluster-class}},
+  default value is set proportional to the cluster cores cardinalities. Otherwise, equal prior probabilities are 
+  given to the clusters by default. 
  }
 
   \item{stage}{
@@ -55,28 +57,29 @@ Further arguments to be passed to methods (see \code{\link{dbs-methods}}) or arg
 }
 
 \details{
-This function provides diagnostics on data clustered according to any density-based clustering method. The \code{dbs}
+This function provides diagnostics for a clustering produced by any density-based clustering method. The \code{dbs}
 information is a suitable modification of the \code{\link[cluster:silhouette]{silhouette}} information aimed at evaluating 
 the cluster quality in a density based framework. It is based on the estimation of data posterior probabilities of belonging to the clusters. It may be 	 
-used to measure the quality of data allocation to the clusters as well as to choose the best partition among different ones. 	 
+used to measure the quality of data allocation to the clusters. High values of the \eqn{\hat{dbs}} are evidence of a good quality clustering. 	 
+
+Define
+\deqn{
+\hat{\tau}_m(x_i)=\frac{\pi_{m} \hat{f}(x_i|x_ \in m)}{\sum_{m=1}^M \pi_{m}\hat{f}(x_i|x_i \in m)} \quad m=1,\ldots,M, 
+}
+
+where \eqn{\pi_{m}} is a prior probability of \eqn{m} and \eqn{\hat{f}(x_i|x_i \in m)} is a density estimate at \eqn{x_i} evaluated with function \code{\link{kepdf}} by using the only data points in \eqn{m}. Density estimation is performed with fixed bandwidths \code{h}, as evaluated by function \code{h.funct}, possibly multiplied by the shrink factor \code{hmult}.
 
 Density-based silhouette information of \eqn{x_i}, the \eqn{i^{th}} row of the data matrix \code{x}, is defined as follows:
-
 \deqn{
 \hat{dbs}_i=\frac{\log\left(\frac{\hat{\tau}_{m_{0}}(x_i)}{\hat{\tau}_{m_{1}}(x_i)}\right)}{{\max}_{x_i }\left| \log\left(\frac{\hat{\tau}_{m_{0}}(x_i)}{\hat{\tau}_{m_{1}}(x_i)}\right)\right|},
 }
-where \eqn{m_0} is the group where \eqn{x_i} has been allocated and \eqn{m_1} is the group for which \eqn{\tau_m} is maximum, \eqn{m\neq m_0}. \eqn{\tau_m} 
-is estimated by
-\deqn{
-\hat{\tau}_m(x_i)=\frac{\pi_{m} \hat{f}(x_i|x_ \in m)}{\sum_{m=1}^M \pi_{m}\hat{f}(x_i|x_i \in m)} \quad m=1,\ldots,M. 
-}
-
-\eqn{\pi_{m}} is a prior probability of \eqn{m} and \eqn{\hat{f}(x_i|x_i \in m)} is a density estimate at \eqn{x_i} evaluated with function \code{\link{kepdf}} by using the only data points in \eqn{m}.
-Density estimation is performed with fixed bandwidths \code{h}, as evaluated by function \code{h.funct} and possibly 
-multiplied by the shrink factor \code{hmult}.
+where \eqn{m_0} is the group where \eqn{x_i} has been allocated and \eqn{m_1} is the group for which \eqn{\tau_m} is maximum, \eqn{m\neq m_0}. 
 
 \emph{Note:} when there exists \eqn{x_j} such that \eqn{\hat{\tau}_{m_{1}}(x_j)} is zero, \eqn{\hat{dbs}_j} is forced to 1 and \eqn{{\max}_{x_i }\left| \log\left(\frac{\hat{\tau}_{m_{0}}(x_i)}{\hat{\tau}_{m_{1}}(x_i)}\right)\right|}
-is taken by excluding \eqn{x_j} from tha data matrix \code{x}.}
+is computed by excluding \eqn{x_j} from tha data matrix \code{x}.
+
+See Menardi (2011) for a detailed treatment.}
+
 
 \value{
 An object of class \code{"dbs"}, with slots:  

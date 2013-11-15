@@ -89,7 +89,7 @@ x <- wine[, c(2,5,8)]
 
 #clustering
 cl <- pdfCluster(x)
-plot(cl, which=3, stage=2 )
+plot(cl, which=3, stage=2)
 
 table(cl@clusters, gr)
 #set "B" for Barolo, "G" for Grignolino, "A" for Barbera
