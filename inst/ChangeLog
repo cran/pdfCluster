@@ -81,4 +81,8 @@ version 1.0-1 (2013-07-28)
  - included option to break running of foreign .C function to find pairwise connections
  - added new function "groups" to extract groups; slot "clusters" in objects 
    of pdfCluster-class is now to be considered obsolete
+
+version 1.0-2 (2014-04-28)
+ - added citation to article on the package published on Journal of Statistical Software
+ - removed obsolete argument DUP in call to foreign functions
  	  

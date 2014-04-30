@@ -37,10 +37,10 @@ kepdf <- function (x, eval.points = x, kernel = "gaussian", bwtype = "fixed", h 
     pdf <- switch(kernel,  
         gaussian = .C("c_kepdfN", as.double(x), as.double(rec.hm/sqrt(2)), as.double(eval.points), 
               as.integer(nx), as.integer(ndim), as.integer(neval), 
-              double(neval), as.double(prodhm), DUP=FALSE, PACKAGE="pdfCluster"),
+              double(neval), as.double(prodhm), PACKAGE="pdfCluster"),
         t7 = .C("c_kepdft7", as.double(x), as.double(rec.hm), as.double(eval.points), 
               as.integer(nx), as.integer(ndim), as.integer(neval), 
-              double(neval), as.double(prodhm), DUP=FALSE, PACKAGE="pdfCluster")
+              double(neval), as.double(prodhm), PACKAGE="pdfCluster")
 	)
 	new("kepdf", call = match.call(), x = x, eval.points = eval.points, estimate = pdf[[7]], kernel= kernel, bwtype = bwtype, par = par)
 	}	
@@ -72,10 +72,10 @@ h.norm <- function(x){
     pdfpil <- switch(kernel,  
         gaussian = .C("c_kepdfN", as.double(x), as.double(rec.hm/sqrt(2)), as.double(x), 
               as.integer(nx), as.integer(ndim), as.integer(nx), 
-              double(nx), as.double(prodhm), DUP=FALSE, PACKAGE="pdfCluster"),
+              double(nx), as.double(prodhm), PACKAGE="pdfCluster"),
         t7= .C("c_kepdft7", as.double(x), as.double(rec.hm), as.double(x), 
               as.integer(nx), as.integer(ndim), as.integer(nx), 
-              double(nx), as.double(prodhm), DUP=FALSE, PACKAGE="pdfCluster") 			  
+              double(nx), as.double(prodhm), PACKAGE="pdfCluster") 			  
         )
         #cons <- switch (kernel, gaussian = 1/((2 * pi)^(ndim/2) * nx), biweight = (15/16)/nx, triweight = (35/32)/nx)
         #g <- exp(mean(log(pdfpil[[7]]*cons)))
@@ -370,7 +370,7 @@ pdfCluster.data <- function (x, graphtype, hmult, Q="QJ", lambda = 0.10, grid.pa
 		} else 
 	stop("graphtype should be one of 'unidimensional', 'delaunay', or 'pairs'")
 	nc <- num.con(x, estimate, graph.nb$graph, profile.grid = n.grid-2, correct=TRUE)  
-  	    #qui connessi
+  	    #determine connected components
         struct <- con2tree(nc, estimate)
     if (struct$bad) {
         message("No output given")
@@ -418,7 +418,7 @@ pdfCluster.graphpairs <- function (x, graphtype, hmult, Q, lambda=0.10, grid.pai
 	graph.par$comp.area <- graph.nb$comp.areas
 	graph.par$lambda=lambda
 	nc <- num.con(x@x, x@pdf$estimate, graph.nb$graph, profile.grid = n.grid-2, correct=TRUE)  
-  	    #qui connessi
+  	    #determine connected components
         struct <- con2tree(nc,x@pdf$estimate)
     if (struct$bad) {
         message("No output given")
@@ -651,16 +651,15 @@ con2tree <- function(object, f){
   if (K == 1){
   gruppi <- as.vector(object$id[,ncol(object$id)])
   M <-1 } else {
-  for(j in 1:K) lista[[j]] <-  as.vector(object$id[,index[j]])  # lista degli insiemi connessi ai punti di salto
-  #...inizio della ex funzione groups(), qui in parte modificata
-  gruppi <- rep(0,length(lista[[1]]))   #vettore di zeri di lunghezza pari a dim campionaria   
+  for(j in 1:K) lista[[j]] <-  as.vector(object$id[,index[j]])  # list of connected sets at the jumps
+   gruppi <- rep(0,length(lista[[1]]))    
   M <- 0                                 
   insiemi <- list()
-  # passo con k=1
+  # step
   k <- 1
   allocated <- (gruppi>0)
   insiemi[[k]] <- setdiff(unique(gruppi),0)
-  # ciclo k=2,...,K
+  # loop k=2,...,K
   while(k < K) {
     k <- k+1
     sets  <- lista[[k]]                #elenco connessi al salto k 
@@ -689,9 +688,8 @@ con2tree <- function(object, f){
     u0 <- u[u>0]
     for(i in 1:max(gruppi)) g[gruppi==u0[i]] <- i
     gruppi <- g
-    } #..fine ex funzione groups()
+    } 
   }
-  #prima era: salti <- diff(c(0,nc))
   salti <- diff(nc)
   salta.giu <- rev(which(diff(nc)[index]<0))
   altezza <- numeric(M)
@@ -859,13 +857,12 @@ graph.del <- function(x, Q="QJ") {
    # Crea la triangolazione e elenca i VICINI PER OGNI PUNTO
  
    # REQUIRES geometry
-   # Options implementate per qdelaunay.exe:
-   # Qt  - tutte le regioni sono simplicial (in 2D triangoli)
-   # Qj  - joggle input tutte le regioni sono simplicial (in 2D triangoli)
-   # Fv  - l'output e' la lista dei punti per ogni triangolo
-   #       (i punti sono numerati da 0 a n-1 come nel data set)
+   # Options implemented for qdelaunay.exe:
+   # Qt  - all regions are simplicial (in 2D triangles)
+   # Qj  - joggle input all regions are simplicial (in 2D triangles)
+   # Fv  - output is a list of points of each triangle
  
-   # OUTPUT - per ogni punto lista dei vicini, punti per cui esiste un arco
+   # OUTPUT - for each point, list of connected points
    # ----------------------------------------------------------------------
    x <- as.matrix(x)
    x0 <- x
@@ -928,9 +925,9 @@ matrix.connected.C <- function(x, pdf, grid.pairs=10, output.complete=FALSE ){
 	d<-ncol(x)
 	pairs.ord <- combn(1:n,2)
 	alpha<-seq(0,1,length=grid.pairs)
-	#predispongo una matrice fatta come segue:nrow = n*grid.pairs ncol=d
-	#ogni k-pla di grid.pairs righe rappresenta il set di punti sul segmento che congiunge una coppia
-	#l'ordine delle coppie e' indicato da pairs --> 12 13 14 15...23 24 25...34 35...
+	#set a matrix as follows: nrow = n*grid.pairs ncol=d
+	#each k-ple of grid.pairs rows is a set of points along the segment joining a pair
+	#pairs indicated the order--> 12 13 14 15...23 24 25...34 35...
 	new <- as.vector(x[t(pairs.ord)[,1],])%*%t(alpha)+as.vector(x[t(pairs.ord)[,2],])%*%t(1-alpha)
 	new <- matrix(as.vector(t(new)),ncol=d)
 	F <- kepdf(pdf@x, bwtype=pdf@bwtype, kernel=pdf@kernel,eval.points=new, h=pdf@par$h, hx = pdf@par$hx)@estimate
@@ -944,7 +941,7 @@ num.con<-function (x, estimate, x.nb, pn = 0.9, profile = TRUE, profile.grid = 2
     ngrid <- profile.grid
     if (profile) pn <- seq(0, 1, length = ngrid + 2)[-c(1, ngrid + 2)]
     qn <- as.numeric(quantile(estimate, 1 - pn))
-    xd.id <- (matrix(estimate, ncol = 1) %*% (1/qn)) < 1 # mi dice per ogni x(compresi quelli aggiuntivi) se sono < del quantile o no
+    xd.id <- (matrix(estimate, ncol = 1) %*% (1/qn)) < 1 # TRUE if f < quantile 
     nc.nc <- rep(0, length(qn))
     names(nc.nc) <- format(pn, digit = 3)
     nc.id <- matrix(0, nrow = n, ncol = length(qn))   #14/03 e quindi anche nc.id e nc.id1 al momento
@@ -978,7 +975,7 @@ num.con<-function (x, estimate, x.nb, pn = 0.9, profile = TRUE, profile.grid = 2
         }
         nc.nc[i] <- length(unique(nc.id[, i])) - 1
     }
-	#correzione 14/06/2011
+	#correction 14/06/2011
 	if (profile) {
 		newnames <- c("0",names(nc.nc),"1")
 		nc.nc <- c(0,nc.nc,1)

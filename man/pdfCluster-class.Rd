@@ -91,7 +91,7 @@ See \code{\link{pdfCluster}} for further details.
 %Azzalini A., Torelli N. (2007). Clustering via nonparametric density estimation.
 % \emph{Statistics and Computing}. vol. 17, pp. 71-80.
 
-%Menardi G., Azzalini, A. (2013). An advancement in clustering via nonparametric
+%Menardi G., Azzalini, A. (2014). An advancement in clustering via nonparametric
 % density estimation. DOI: 10.1007/s11222-013-9400-x.
 %}
 

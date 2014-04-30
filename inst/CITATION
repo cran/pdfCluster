@@ -2,19 +2,20 @@ citHeader("To cite the pdfCluster package in publications use:")
 
 if(!exists("meta") || is.null(meta)) meta <- packageDescription("pdfCluster")
 
-citEntry(entry="manual",
-	title = paste("{R} package \\texttt{pdfCluster}: ",
-	" Cluster analysis via nonparametric density estimation (Version ", meta$Version, ")", sep=""),
-	author = personList(as.person("A. Azzalini"), as.person("G. Menardi")),
-   note = "with contribution of T. Rosolin up to version 0.0-13",
-   year = substr(meta$Date, 1, 4),
-   url = "http://cran.r-project.org/web/packages/pdfCluster/index.html",
-   textVersion = 
-paste("Azzalini, A. and Menardi, G. (", substr(meta$Date, 1, 4), "). ",
-"R package 'pdfCluster': Cluster analysis via nonparametric density estimation", " (Version ", meta$Version, "). ",
-"With contribution of T. Rosolin up to version 0.0-13. ", "URL http://cran.r-project.org/web/packages/pdfCluster/index.html",
-sep="")
+citEntry(entry = "Article",
+  title        = "Clustering via Nonparametric Density Estimation: The {R} Package {pdfCluster}",
+  author       = personList(as.person("Adelchi Azzalini"),
+                   as.person("Giovanna Menardi")),
+  journal      = "Journal of Statistical Software",
+  year         = "2014",
+  volume       = "57",
+  number       = "11",
+  pages        = "1--26",
+  url          = "http://www.jstatsoft.org/v57/i11/",
+
+  textVersion  =
+  paste("Adelchi Azzalini, Giovanna Menardi (2014).",
+        "Clustering via Nonparametric Density Estimation: The R Package pdfCluster.",
+        "Journal of Statistical Software, 57(11), 1-26.",
+        "URL http://www.jstatsoft.org/v57/i11/.")
 )
-
-
- 

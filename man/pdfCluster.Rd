@@ -14,8 +14,8 @@
 
 \description{
 Cluster analysis is performed by the density-based procedures described in 
-Azzalini and Torelli (2007) and Menardi and Azzalini (2013). Operationally, the 
-kernel estimation method of the density is used.
+Azzalini and Torelli (2007) and Menardi and Azzalini (2014), and summarized
+in Azzalini and Menardi (2014). 
 }
 
 \usage{
@@ -214,10 +214,14 @@ This method applies to objects of \code{\link{pdfCluster-class}} when the graph
 
 
 \references{
+Azzalini, A., Menardi, G. (2014). Clustering via nonparametric density estimation: the R package pdfCluster.
+        \emph{Journal of Statistical Software}, 57(11), 1-26,
+        URL http://www.jstatsoft.org/v57/i11/.
+        
 Azzalini A., Torelli N. (2007). Clustering via nonparametric density estimation.
  \emph{Statistics and Computing}. 17, 71-80.
 
-Menardi, G., Azzalini, A. (2013) An advancement in clustering via nonparametric
+Menardi, G., Azzalini, A. (2014). An advancement in clustering via nonparametric
  density estimation. \emph{Statistics and Computing}. DOI: 10.1007/s11222-013-9400-x.
 }
 

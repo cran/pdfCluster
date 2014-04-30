@@ -1,11 +1,11 @@
-defcdcbc8c4aa5a55dd5ddb3fc472aa2 *DESCRIPTION
+5ffbe73b6565024397d2dcdd32317bea *DESCRIPTION
 58ae31d56f13c33b7e5c421cb39fac46 *NAMESPACE
-9d078f48eea4079c97ceeb9d4a10e248 *R/pdfCluster.R
+15376d99c972baf5098797fc6ea22f04 *R/pdfCluster.R
 625639f7029085024bc36de21ee651b6 *R/zzz.R
 e8c2dd22bd68df7d4efc55b80dff98e7 *data/oliveoil.rda
 ac0ad6dc3bb2d92ea8ccf0bed7f76a01 *data/wine.rda
-b50dc180d73235074b9f6049656f922f *inst/CITATION
-8f80edbe4634ac5cf03bb42a1394d3ae *inst/ChangeLog
+ce57193a2630f48362e97977741c913b *inst/CITATION
+119f9fbe6d4e75d27799ea6df678e8cc *inst/ChangeLog
 68802a8544d77ae5bda3d651b8b56bed *man/adj.rand.index.Rd
 3bc24572a2a0f6caffe2de9054587100 *man/dbs-class.Rd
 a428336337b7f8d040e2c77829f0b8dc *man/dbs.Rd
@@ -16,9 +16,9 @@ bd150635cc6ad81f5d3057260f9adee2 *man/hprop2f.Rd
 cc2495d59f242330244d260dfea36b89 *man/kepdf.Rd
 c17cebb5eda44432289ad0ef182359c1 *man/oliveoil.Rd
 22b308ed3b3b5b918d6bef1ddca8c90f *man/pdfClassification.Rd
-10278ab3c7244860071873d51ff25cb0 *man/pdfCluster-class.Rd
-0ddfbf33c87ff883b1f50f9c023b53f9 *man/pdfCluster-package.Rd
-19e4507a725f7976582cc8dafb9c0348 *man/pdfCluster.Rd
+963a028d500ab4872cda6c0fed8782da *man/pdfCluster-class.Rd
+6dba8e9389c7f514f29708bf6487f87f *man/pdfCluster-package.Rd
+59f2f7201e50ba9c58577d18b047fdcf *man/pdfCluster.Rd
 810b17f930db87eeb38fbe11e63c77d4 *man/plot-methods.Rd
 7f5d5a291273914c84211fc5a3f81903 *man/plot.dbs.Rd
 6935ab86ded0eb153545a1eb41296e6b *man/plot.kepdf.Rd
@@ -29,4 +29,3 @@ c17cebb5eda44432289ad0ef182359c1 *man/oliveoil.Rd
 63dec09a4a66d42d7d4cb80860af5ad7 *src/kepdf.c
 f109d0e8ffaaab129047a41443ec672d *src/macon.c
 5509aebdc2a3c78d29a54448030ae4fc *src/nc.c
-a13de0ca564cc235f041578c09089ba1 *vignettes/pdfCluster_vignette.pdf

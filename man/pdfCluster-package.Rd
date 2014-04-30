@@ -5,7 +5,7 @@
 
 \description{
 This package performs cluster analysis via kernel density estimation (Azzalini 
-and Torelli, 2007; Menardi and Azzalini, 2013). 
+and Torelli, 2007; Menardi and Azzalini, 2014). 
 Clusters are associated to the maximally connected components with estimated 
 density above a threshold. As the threshold varies, these clusters may be 
 represented according to a hierarchical structure in the form of a tree. 
@@ -21,6 +21,8 @@ Diagnostics methods for evaluating the quality of clustering are also available
 (Menardi, 2011). Moreover, the package provides a routine to estimate the 
 probability density function by kernel methods, given a set of data with 
 arbitrary dimension. 
+The main features of the package are described and illustrated
+in Azzalini and Menardi (2014).
 }
 \details{
  The \code{\link{pdfCluster-package}} makes use of classes and methods of the 
@@ -42,7 +44,7 @@ arbitrary dimension.
 	by means of the Delaunay triangulation when data dimensionality is 
 	up to 6, following Azzalini and Torelli (2007); 
         for higher dimensional data a new procedure, which is less time-consuming,
-        is now adopted (Menardi and Azzalini, 2013);}
+        is now adopted (Menardi and Azzalini, 2014);}
     \item{the order of classification of lower density data depends now also on
 	the standard error of the estimated density ratios; moreover, a cluster-specific 
 	bandwidth is the default option to classify low density data.}
@@ -57,13 +59,17 @@ Adelchi Azzalini, Giovanna Menardi, Tiziana Rosolin
 Maintainer: Giovanna Menardi <menardi at stat.unipd.it>
 }
 \references{
+Azzalini, A., Menardi, G. (2014). Clustering via Nonparametric Density Estimation: The R Package pdfCluster.
+        \emph{Journal of Statistical Software}, 57(11), 1-26,
+        URL http://www.jstatsoft.org/v57/i11/.
+        
 Azzalini A., Torelli N. (2007). Clustering via nonparametric density estimation.
  \emph{Statistics and Computing}, 17, 71-80.
 
 Menardi G. (2011). Density based Silhouette diagnostics for clustering methods.
  \emph{Statistics and Computing}, 21, 295-308.
 
-Menardi G., Azzalini, A. (2013) An advancement in clustering via nonparametric density estimation.
+Menardi G., Azzalini, A. (2014). An advancement in clustering via nonparametric density estimation.
  \emph{Statistics and Computing}, DOI: 10.1007/s11222-013-9400-x, to appear.
 }
 \keyword{ package }
