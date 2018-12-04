@@ -20,8 +20,7 @@ estimated density, is automatically selected by the procedure.
 Diagnostics methods for evaluating the quality of clustering are also available
 (Menardi, 2011). Moreover, the package provides a routine to estimate the 
 probability density function by kernel methods, given a set of data with 
-arbitrary dimension. 
-The main features of the package are described and illustrated
+arbitrary dimension. The main features of the package are described and illustrated
 in Azzalini and Menardi (2014).
 }
 \details{

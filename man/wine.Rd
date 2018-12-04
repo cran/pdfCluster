@@ -22,8 +22,7 @@ The original data set comprises 27 variables. Here a subset of 14 variables only
 
 \source{
 Forina, M., Lanteri, S. Armanino, C., Casolino, C., Casale, M., Oliveri, P. (2008). V-PARVUS. \emph{An Extendible Pachage of programs for 
-esplorative data analysis, classification and regression analysis}. Dip. Chimica e Tecnologie Farmaceutiche ed Alimentari, \enc{Università}{Universita} di Genova. Freely available at
-\url{http://www.parvus.unige.it}. 
+esplorative data analysis, classification and regression analysis}. Dip. Chimica e Tecnologie Farmaceutiche ed Alimentari, \enc{Università}{Universita} di Genova.
 }
  
 %\references{

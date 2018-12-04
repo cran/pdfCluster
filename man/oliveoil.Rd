@@ -27,8 +27,7 @@ corresponding row sum \eqn{\sum_j (x_j+1)}.
 }
 
 \source{
-Forina, M., Lanteri, S. Armanino, C., Casolino, C., Casale, M., Oliveri, P. (2008). V-PARVUS. \emph{An Extendible Package of programs for explorative data analysis, classification and regression analysis}. Dip. Chimica e Tecnologie Farmaceutiche ed Alimentari, \enc{Università}{Universita} di Genova. Freely available at
-\url{http://www.parvus.unige.it}. 
+Forina, M., Lanteri, S. Armanino, C., Casolino, C., Casale, M., Oliveri, P. (2008). V-PARVUS. \emph{An Extendible Package of programs for explorative data analysis, classification and regression analysis}. Dip. Chimica e Tecnologie Farmaceutiche ed Alimentari, \enc{Università}{Universita} di Genova. 
 }
  
 \references{

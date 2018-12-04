@@ -85,4 +85,9 @@ version 1.0-1 (2013-07-28)
 version 1.0-2 (2014-04-28)
  - added citation to article on the package published on Journal of Statistical Software
  - removed obsolete argument DUP in call to foreign functions
+
+version 1.0-3 (2018-12-04)
+ - S3 methods registered
+ - removed unworking links
+ - removed warning message when the package is uploaded 
  	  
