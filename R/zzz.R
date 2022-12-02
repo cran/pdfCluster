@@ -5,7 +5,7 @@
 {
   library.dynam("pdfCluster", pkg, lib)
   #useDynLib("pdfCluster",.registration = TRUE)
-   }
+  }
 
 
 .onAttach <- function(lib, pkg)

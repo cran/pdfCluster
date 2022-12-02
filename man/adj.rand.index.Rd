@@ -4,7 +4,7 @@
 \title{
 Adjusted Rand index}
 \description{
-Computes the adjusted Rand index to compare two altenative partitions of the same set. 
+Computes the adjusted Rand index to compare two alternative partitions of the same set. 
 }
 \usage{
 adj.rand.index(cl1, cl2)

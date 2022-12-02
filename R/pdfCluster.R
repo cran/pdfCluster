@@ -529,7 +529,7 @@ setMethod("show",signature("pdfCluster"), function(object){
    })
 
 groups <- function(obj, stage=length(obj@stages)) {
- if(class(obj)!="pdfCluster") stop("Function 'groups' extracts groups from objects of class 'pdfCluster'")
+ if(!is(obj, "pdfCluster")) stop("Function 'groups' extracts groups from objects of class 'pdfCluster'")
  if (stage==0) out <- obj@cluster.cores else {if (is.null(obj@stages)) out <- NULL else out <- obj@stages[[stage]]}
  out
 	}

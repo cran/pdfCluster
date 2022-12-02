@@ -11,11 +11,11 @@ citEntry(entry = "Article",
   volume       = "57",
   number       = "11",
   pages        = "1--26",
-  url          = "http://www.jstatsoft.org/v57/i11/",
+  url          = "https://www.jstatsoft.org/v57/i11/",
 
   textVersion  =
   paste("Adelchi Azzalini, Giovanna Menardi (2014).",
         "Clustering via Nonparametric Density Estimation: The R Package pdfCluster.",
         "Journal of Statistical Software, 57(11), 1-26.",
-        "URL http://www.jstatsoft.org/v57/i11/.")
+        "URL https://www.jstatsoft.org/v57/i11/.")
 )

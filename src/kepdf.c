@@ -3,9 +3,6 @@
 #include<R.h>
 #include<Rmath.h>
 
-//C code for kernel density estimation: the routines refer to the use of two different kernels:
-// gaussian, t_7
-
 void c_kepdfN(double *x, double *h, double *xeval, int *nx, int *ndim, int *neval, double *f, double *p)
 {
 
@@ -22,12 +19,9 @@ void c_kepdfN(double *x, double *h, double *xeval, int *nx, int *ndim, int *neva
 
     for(j=0; j<_ndim; j++)
     {
-     //moltiplicare costa meno che dividere: in ingresso h=1/hm
      u  = ( x[k+j*_nx]-xeval[i+j*_neval] )*h[k+j*_nx]; 
      p1+=  u*u;
     }
-    //il diviso 2 dentro exp() è stato portato fuori nel wrapper --> h = h/sqrt(2)
-    //moltiplicare costa meno che dividere: in ingresso p=1/p
     s += exp(-p1)*p[k];
    }
     *f++=s*cons; 
@@ -54,7 +48,6 @@ void c_kepdft7(double *x, double *h, double *xeval, int *nx, int
 	prod = one;
 	for(j=0; j<_ndim; j++)
 {
-  //moltiplicare costa meno che dividere: in ingresso h=1/hm
 	u  = ( *(x + k + j*_nx) - *(xeval + i + j*_neval) )**(h + k + j*_nx);
     prod*=(seven+u*u);
 }

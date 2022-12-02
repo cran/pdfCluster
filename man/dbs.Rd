@@ -76,7 +76,7 @@ Density-based silhouette information of \eqn{x_i}, the \eqn{i^{th}} row of the d
 where \eqn{m_0} is the group where \eqn{x_i} has been allocated and \eqn{m_1} is the group for which \eqn{\tau_m} is maximum, \eqn{m\neq m_0}. 
 
 \emph{Note:} when there exists \eqn{x_j} such that \eqn{\hat{\tau}_{m_{1}}(x_j)} is zero, \eqn{\hat{dbs}_j} is forced to 1 and \eqn{{\max}_{x_i }\left| \log\left(\frac{\hat{\tau}_{m_{0}}(x_i)}{\hat{\tau}_{m_{1}}(x_i)}\right)\right|}
-is computed by excluding \eqn{x_j} from tha data matrix \code{x}.
+is computed by excluding \eqn{x_j} from the data matrix \code{x}.
 
 See Menardi (2011) for a detailed treatment.}
 

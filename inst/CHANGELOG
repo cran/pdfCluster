@@ -89,5 +89,8 @@ version 1.0-2 (2014-04-28)
 version 1.0-3 (2018-12-04)
  - S3 methods registered
  - removed unworking links
- - removed warning message when the package is uploaded 
+ - removed warning message when the package is uploaded
+ 
+version 1.0-4 (2022-12-01)
+ - removed some warnings in package check   
  	  
